@@ -1,9 +1,11 @@
 import React, { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import Papa from 'papaparse';
+import Exercise from '../components/exercise';
 
 export default () => {
   const [entries, setEntries] = useState([]);
+  const [runningExercise, beginExercise] = useState(false);
 
   const onDrop = useCallback(acceptedFiles => {
     const file = acceptedFiles[0];
@@ -29,13 +31,20 @@ export default () => {
   
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, multiple: false });
 
+  if (runningExercise) {
+    return <Exercise entries={entries} />;
+  }
+
   if (entries.length) {
     return (
-      <ul>
-        { entries.map((entry, i) => (
-          <li key={i}><strong>{entry.word}</strong> - <span>{entry.translation}</span></li>
-        ))}
-      </ul>
+      <>
+        <button type="button" onClick={() => beginExercise(true)}>Begin exercise</button>
+        <ul>
+          { entries.map((entry, i) => (
+            <li key={i}><strong>{entry.word}</strong> - <span>{entry.meaning}</span></li>
+          ))}
+        </ul>
+      </>
     )
   }
 
