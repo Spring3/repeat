@@ -1,61 +1,37 @@
-import React, { useCallback, useState } from 'react'
-import { useDropzone } from 'react-dropzone'
-import Papa from 'papaparse';
-import Exercise from '../components/exercise';
+import React, { useCallback } from 'react'
+import Exercise from '../components/Exercise';
+import { DataContextProvider, useData }  from '../contexts/DataContext';
+import { Dropzone } from '../components/Dropzone';
+import { parseFiles } from '../utils/parseFile';
 
-export default () => {
-  const [entries, setEntries] = useState([]);
-  const [runningExercise, beginExercise] = useState(false);
+const Page = () => {
+  const { data, setData } = useData();
 
-  const onDrop = useCallback(acceptedFiles => {
-    const file = acceptedFiles[0];
-    const reader = new FileReader()
-
-    reader.onabort = () => console.log('file reading was aborted');
-    reader.onerror = () => console.log('file reading has failed');
-    reader.onload = () => {
-      Papa.parse(reader.result, {
-        header: true,
-        complete: (result) => {
-          console.log('result', JSON.stringify(result, null, 2));
-          setEntries(result.data);
-        },
-        error: (error) => {
-          console.error(error);
-        }
-      })
-    }
-
-    reader.readAsText(file);
+  const onDrop = useCallback(async (acceptedFiles) => {
+    const fileContents = await parseFiles(acceptedFiles);
+    setData(fileContents);
   }, []);
-  
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, multiple: false });
 
-  if (runningExercise) {
-    return <Exercise entries={entries} />;
-  }
-
-  if (entries.length) {
+  if (data.length) {
     return (
       <>
-        <button type="button" onClick={() => beginExercise(true)}>Begin exercise</button>
+        <Exercise entries={data} />
         <ul>
-          { entries.map((entry, i) => (
+          { data.map((entry, i) => (
             <li key={i}><strong>{entry.word}</strong> - <span>{entry.meaning}</span></li>
           ))}
         </ul>
       </>
-    )
+    );
   }
 
-  return (
-    <div {...getRootProps()}>
-      <input {...getInputProps()} />
-      {
-        isDragActive
-        ? <p>Drop the .csv file here...</p>
-        : <p>Drag 'n' drop the .cvs file here, or click to select file</p>
-      }
-    </div>
-  )
+  return <Dropzone onDrop={onDrop} />
 }
+
+export default () => {
+  return (
+    <DataContextProvider>
+      <Page />
+    </DataContextProvider>
+  );
+};
