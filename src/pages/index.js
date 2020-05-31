@@ -31,9 +31,7 @@ const Page = () => {
 
   if (data.length) {
     return (
-      <div>
-        <Exercise entries={data} />
-      </div>
+      <Exercise entries={data} />
     );
   }
 

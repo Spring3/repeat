@@ -1,5 +1,38 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import styled from '@emotion/styled';
+
+const ExerciseLayout = styled.ul`
+  background: #eeeeee;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+
+  li {
+    padding: 1rem 2rem;
+    cursor: pointer;
+  }
+`;
+
+const TableWrapper = styled.div`
+  padding: 1rem;
+`;
+
+const TableOfWords = styled.table`
+  td, th {
+    padding: .5rem 1rem;
+    border: 2px solid #eeeeee;
+  }
+`;
+
+const Searchbar = styled.input`
+  width: 100%;
+  padding: .5rem;
+  min-width: 0;
+  box-sizing: border-box;
+  margin-bottom: 1rem;
+`;
 
 const ENTER = 13;
 
@@ -65,35 +98,51 @@ const Exercise = ({ entries }) => {
 
   return (
     <div>
-      <div>
-        <button
-          type="button"
-          onClick={() => setDisplayWords(!displayWords)}
-        >
-          {displayWords ? 'Hide All Words' : 'Show All Words'}
-        </button>
-      </div>
-      <div>
-        <button
-          type="button"
+      <ExerciseLayout>
+        <li
           onClick={() => {
-            setBeginExercise(true);
             setDisplayWords(false);
           }}
-        >
-          Begin Exercise
-        </button>
-      </div>
-      {displayWords && (
-        <div>
-          <h2>The following are all the words from the file:</h2>
-          <ul>
-            { entries.map((entry, i) => (
-              <li key={i}><strong>{entry.word}</strong> - <span>{entry.meaning}</span></li>
-            ))}
-          </ul>
-        </div>
-      )}
+        >Exercises</li>
+        <li
+          onClick={() => {
+            setDisplayWords(true);
+            setBeginExercise(false);
+          }}
+        >Words ({entries.length})</li>
+      </ExerciseLayout>
+      {displayWords
+        ? (
+          <TableWrapper>
+            <Searchbar type="text" placeholder="Search..." onChange={() => {}}></Searchbar>
+            <TableOfWords>
+              <tr>
+                <th>Word</th>
+                <th>Meaning</th>
+              </tr>            
+              { entries.map((entry, i) => (
+                <tr key={i}>
+                  <td><strong>{entry.word}</strong></td>
+                  <td>{entry.meaning}</td>
+                </tr>
+              ))}
+            </TableOfWords>
+          </TableWrapper>
+        )
+        : (
+          <div>
+            <button
+              type="button"
+              onClick={() => {
+                setBeginExercise(true);
+                setDisplayWords(false);
+              }}
+            >
+              Begin Exercise
+            </button>
+          </div>
+        )
+      }
     </div>
   );
 }
