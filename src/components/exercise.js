@@ -9,6 +9,8 @@ const Exercise = ({ entries }) => {
     correct: [],
     mistakes: []
   });
+  const [beginExercise, setBeginExercise] = useState(false)
+  const [displayWords, setDisplayWords] = useState(false)
 
   const entry = entries[progress.index];
 
@@ -43,11 +45,55 @@ const Exercise = ({ entries }) => {
     );
   }
 
+  if (beginExercise) {
+    return (
+      <div>
+        <div>
+          <h3>{entry.meaning}</h3>
+          <input type="text" onKeyUp={onKeyUp} placeholder="Answer" required />
+          <small>Press Enter to submit</small>
+        </div>
+        <div>
+          <button
+            type="button"
+            onClick={() => setBeginExercise(false)}
+          >End Exercise</button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div>
-      <h3>{entry.meaning}</h3>
-      <input type="text" onKeyUp={onKeyUp} placeholder="Answer" required />
-      <small>Press Enter to submit</small>
+      <div>
+        <button
+          type="button"
+          onClick={() => setDisplayWords(!displayWords)}
+        >
+          {displayWords ? 'Hide All Words' : 'Show All Words'}
+        </button>
+      </div>
+      <div>
+        <button
+          type="button"
+          onClick={() => {
+            setBeginExercise(true);
+            setDisplayWords(false);
+          }}
+        >
+          Begin Exercise
+        </button>
+      </div>
+      {displayWords && (
+        <div>
+          <h2>The following are all the words from the file:</h2>
+          <ul>
+            { entries.map((entry, i) => (
+              <li key={i}><strong>{entry.word}</strong> - <span>{entry.meaning}</span></li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

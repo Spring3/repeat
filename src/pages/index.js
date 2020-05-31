@@ -4,6 +4,22 @@ import { DataContextProvider, useData }  from '../contexts/DataContext';
 import { Dropzone } from '../components/Dropzone';
 import { parseFiles } from '../utils/parseFile';
 import { Helmet } from 'react-helmet';
+import styled from '@emotion/styled';
+import 'normalize.css';
+
+const CenteredContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+`;
+
+const Notice = styled.small`
+  display: block;
+  margin-top: 1rem;
+  color: grey;
+`;
 
 const Page = () => {
   const { data, setData } = useData();
@@ -17,17 +33,19 @@ const Page = () => {
     return (
       <div>
         <Exercise entries={data} />
-        <h2>List of all words:</h2>
-        <ul>
-          { data.map((entry, i) => (
-            <li key={i}><strong>{entry.word}</strong> - <span>{entry.meaning}</span></li>
-          ))}
-        </ul>
       </div>
     );
   }
 
-  return <Dropzone onDrop={onDrop} />
+  return (
+    <CenteredContainer>
+      <div>
+        <h2>Upload the .csv file</h2>
+        <Dropzone onDrop={onDrop} />
+        <Notice>*The file should have 2 columns with headers "word" and "meaning"</Notice>
+      </div>
+    </CenteredContainer>
+  )
 }
 
 export default () => {

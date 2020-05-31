@@ -8,6 +8,7 @@ const StyledDropzone = styled.div`
   background: #fafafa;
   border: 2px dashed #eeeeee;
   border-radius: 5px;
+  width: 440px;
 
   & > p {
     color: #bdbdbd;
@@ -25,7 +26,7 @@ const Dropzone = ({ onDrop }) => {
       {
         isDragActive
         ? <p>Drop the .csv file here...</p>
-        : <p>Drag 'n' drop the .csv file here, or click to select</p>
+        : <p>Drag & drop the .csv file here, or click to select</p>
       }
     </StyledDropzone>
   );
