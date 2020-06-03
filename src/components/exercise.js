@@ -12,11 +12,18 @@ const ExerciseLayout = styled.ul`
   li {
     padding: 1rem 2rem;
     cursor: pointer;
+    font-weight: bold;
   }
 `;
 
-const TableWrapper = styled.div`
+const Wrapper = styled.div`
   padding: 1rem;
+`;
+
+const GridWrapper = styled(Wrapper)`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-gap: 1rem;
 `;
 
 const TableOfWords = styled.table`
@@ -32,6 +39,17 @@ const Searchbar = styled.input`
   min-width: 0;
   box-sizing: border-box;
   margin-bottom: 1rem;
+`;
+
+const ExerciseCard = styled.div`
+  background: linear-gradient(to top, rgba(0,0,0,.1) 0%, rgba(0,0,0,.1) 40%, #fff 40%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 300px;
+  box-shadow: 0px 0px 5px 2px #eee;
+  padding: 1rem;
+  cursor: pointer;
 `;
 
 const ENTER = 13;
@@ -113,7 +131,7 @@ const Exercise = ({ entries }) => {
       </ExerciseLayout>
       {displayWords
         ? (
-          <TableWrapper>
+          <Wrapper>
             <Searchbar type="text" placeholder="Search..." onChange={() => {}}></Searchbar>
             <TableOfWords>
               <tr>
@@ -127,20 +145,33 @@ const Exercise = ({ entries }) => {
                 </tr>
               ))}
             </TableOfWords>
-          </TableWrapper>
+          </Wrapper>
         )
         : (
-          <div>
-            <button
-              type="button"
+          <GridWrapper>
+            <ExerciseCard
               onClick={() => {
                 setBeginExercise(true);
                 setDisplayWords(false);
               }}
             >
-              Begin Exercise
-            </button>
-          </div>
+              <div>
+                <h2>Dictation</h2>
+                <p>You are given the meaning, and you need to type the word</p>
+              </div>
+            </ExerciseCard>
+            <ExerciseCard
+              onClick={() => {
+                setBeginExercise(true);
+                setDisplayWords(false);
+              }}
+            >
+              <div>
+                <h2>Reversed Dictation</h2>
+                <p>You are given the word, and you need to choose the meaning</p>
+              </div>
+            </ExerciseCard>
+          </GridWrapper>
         )
       }
     </div>
