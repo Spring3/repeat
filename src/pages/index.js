@@ -40,7 +40,7 @@ const Page = () => {
       <div>
         <h2>Upload the .csv file</h2>
         <Dropzone onDrop={onDrop} />
-        <Notice>*The file should have 2 columns with headers "word" and "meaning"</Notice>
+        <Notice>* The file should have 2 columns with "word" and "meaning" as headers</Notice>
       </div>
     </CenteredContainer>
   )

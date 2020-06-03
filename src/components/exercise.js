@@ -1,23 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-
-const ExerciseLayout = styled.ul`
-  background: #eeeeee;
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-
-  li {
-    padding: 1rem 2rem;
-    cursor: pointer;
-    font-weight: bold;
-  }
-`;
+import ImageStandard from '../images/standard.jpg';
+import { Navbar, Tabs } from './Navbar';
 
 const Wrapper = styled.div`
-  padding: 1rem;
+  padding: 2rem;
 `;
 
 const GridWrapper = styled(Wrapper)`
@@ -42,26 +30,41 @@ const Searchbar = styled.input`
 `;
 
 const ExerciseCard = styled.div`
-  background: linear-gradient(to top, rgba(0,0,0,.1) 0%, rgba(0,0,0,.1) 40%, #fff 40%);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   min-height: 300px;
   box-shadow: 0px 0px 5px 2px #eee;
-  padding: 1rem;
   cursor: pointer;
+  position: relative;
+`;
+
+const CardImage = styled.div`
+  background: url("${props => props.image}") center center;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  background-size: cover;
+`;
+
+const CardInformation = styled.div`
+  z-index: 2;
+  background: rgba(255, 255, 255, .5);
+  padding: 1rem;
 `;
 
 const ENTER = 13;
 
 const Exercise = ({ entries }) => {
+  const [activeTab, setActiveTab] = useState(Tabs.Exercises);
   const [progress, setProgress] = useState({
     index: 0,
     correct: [],
     mistakes: []
   });
   const [beginExercise, setBeginExercise] = useState(false)
-  const [displayWords, setDisplayWords] = useState(false)
 
   const entry = entries[progress.index];
 
@@ -116,20 +119,11 @@ const Exercise = ({ entries }) => {
 
   return (
     <div>
-      <ExerciseLayout>
-        <li
-          onClick={() => {
-            setDisplayWords(false);
-          }}
-        >Exercises</li>
-        <li
-          onClick={() => {
-            setDisplayWords(true);
-            setBeginExercise(false);
-          }}
-        >Words ({entries.length})</li>
-      </ExerciseLayout>
-      {displayWords
+      <Navbar
+        onNavigate={tab => setActiveTab(tab)}
+        wordsCount={entries.length}
+      />
+      {activeTab === Tabs.Words
         ? (
           <Wrapper>
             <Searchbar type="text" placeholder="Search..." onChange={() => {}}></Searchbar>
@@ -152,24 +146,23 @@ const Exercise = ({ entries }) => {
             <ExerciseCard
               onClick={() => {
                 setBeginExercise(true);
-                setDisplayWords(false);
               }}
             >
-              <div>
-                <h2>Dictation</h2>
+              <CardImage image={ImageStandard} />
+              <CardInformation>
+                <h2>Standard test</h2>
                 <p>You are given the meaning, and you need to type the word</p>
-              </div>
+              </CardInformation>
             </ExerciseCard>
             <ExerciseCard
               onClick={() => {
                 setBeginExercise(true);
-                setDisplayWords(false);
               }}
             >
-              <div>
-                <h2>Reversed Dictation</h2>
+              <CardInformation>
+                <h2>Match the meaning</h2>
                 <p>You are given the word, and you need to choose the meaning</p>
-              </div>
+              </CardInformation>
             </ExerciseCard>
           </GridWrapper>
         )
