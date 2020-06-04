@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
+
 import ImageStandard from '../images/standard.jpg';
 import ImageMeaning from '../images/meaning.jpg';
-import { Navbar, Tabs, WordsTab } from './Navbar';
 
 const Wrapper = styled.div`
   padding: 2rem;
@@ -41,18 +41,21 @@ const CardInformation = styled.div`
   padding: 1rem;
 `;
 
-const ENTER = 13;
+const Exercises = {
+  Standard: 'standard',
+  Matching: 'matching'
+};
 
-const Exercise = ({ entries }) => {
-  const [activeTab, setActiveTab] = useState(Tabs.Exercises);
+const ExercisesTab = ({ entries }) => {
+  const [selectedExercise, setSelectedExercise] = useState();
   const [progress, setProgress] = useState({
     index: 0,
     correct: [],
     mistakes: []
   });
-  const [beginExercise, setBeginExercise] = useState(false)
 
   const entry = entries[progress.index];
+  const ENTER = 13;
 
   const onKeyUp = (e) => {
     if (e.keyCode === ENTER) {
@@ -85,7 +88,7 @@ const Exercise = ({ entries }) => {
     );
   }
 
-  if (beginExercise) {
+  if (selectedExercise) {
     return (
       <div>
         <div>
@@ -96,7 +99,7 @@ const Exercise = ({ entries }) => {
         <div>
           <button
             type="button"
-            onClick={() => setBeginExercise(false)}
+            onClick={() => setSelectedExercise()}
           >End Exercise</button>
         </div>
       </div>
@@ -104,49 +107,32 @@ const Exercise = ({ entries }) => {
   }
 
   return (
-    <div>
-      <Navbar
-        onNavigate={tab => setActiveTab(tab)}
-        wordsCount={entries.length}
-      />
-      {activeTab === Tabs.Words
-        ? (<WordsTab entries={entries} />)
-        : (
-          <GridWrapper>
-            <ExerciseCard
-              onClick={() => {
-                setBeginExercise(true);
-              }}
-            >
-              <CardImage image={ImageStandard} loading="lazy" alt="Dictionary" />
-              <CardInformation>
-                <h2>Standard test</h2>
-                <p>You are given the meaning, and you need to type the word</p>
-              </CardInformation>
-            </ExerciseCard>
-            <ExerciseCard
-              onClick={() => {
-                setBeginExercise(true);
-              }}
-            >
-              <CardImage image={ImageMeaning} loading="lazy" alt="Matching the words" />
-              <CardInformation>
-                <h2>Match the meaning</h2>
-                <p>You are given the word, and you need to choose the meaning</p>
-              </CardInformation>
-            </ExerciseCard>
-          </GridWrapper>
-        )
-      }
-    </div>
-  );
+    <GridWrapper>
+      <ExerciseCard onClick={() => setSelectedExercise(Exercises.Standard)}>
+        <CardImage image={ImageStandard} loading="lazy" alt="Dictionary" />
+        <CardInformation>
+          <h2>Standard test</h2>
+          <p>You are given the meaning, and you need to type the word</p>
+        </CardInformation>
+      </ExerciseCard>
+      <ExerciseCard onClick={() => setSelectedExercise(Exercises.Matching)}>
+        <CardImage image={ImageMeaning} loading="lazy" alt="Matching the words" />
+        <CardInformation>
+          <h2>Match the meaning</h2>
+          <p>You are given the word, and you need to choose the meaning</p>
+        </CardInformation>
+      </ExerciseCard>
+    </GridWrapper>
+  )
 }
 
-Exercise.propTypes = {
+ExercisesTab.propTypes = {
   entries: PropTypes.arrayOf(PropTypes.shape({
     word: PropTypes.string.isRequired,
     meaning: PropTypes.string.isRequired
-  }))
-};
+  })).isRequired
+}
 
-export default Exercise;
+export {
+  ExercisesTab
+};

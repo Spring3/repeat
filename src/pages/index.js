@@ -1,11 +1,13 @@
-import React, { useCallback } from 'react'
-import Exercise from '../components/Exercise';
+import React, { useCallback, useState } from 'react'
 import { DataContextProvider, useData }  from '../contexts/DataContext';
 import { Dropzone } from '../components/Dropzone';
 import { parseFiles } from '../utils/parseFile';
 import { Helmet } from 'react-helmet';
 import styled from '@emotion/styled';
 import 'normalize.css';
+import { Navbar, Tabs } from '../components/Navbar';
+import { WordsTab } from '../components/WordsTab';
+import { ExercisesTab } from '../components/ExercisesTab';
 
 const CenteredContainer = styled.div`
   display: flex;
@@ -23,6 +25,7 @@ const Notice = styled.small`
 
 const Page = () => {
   const { data, setData } = useData();
+  const [activeTab, setActiveTab] = useState(Tabs.Exercises);
 
   const onDrop = useCallback(async (acceptedFiles) => {
     const fileContents = await parseFiles(acceptedFiles);
@@ -31,7 +34,16 @@ const Page = () => {
 
   if (data.length) {
     return (
-      <Exercise entries={data} />
+      <div>
+        <Navbar
+          onNavigate={tab => setActiveTab(tab)}
+          wordsCount={data.length}
+        />
+        {activeTab === Tabs.Words
+          ? (<WordsTab entries={data} />)
+          : (<ExercisesTab entries={data} />)
+        }
+      </div>
     );
   }
 
