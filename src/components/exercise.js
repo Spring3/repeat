@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import ImageStandard from '../images/standard.jpg';
-import { Navbar, Tabs } from './Navbar';
+import ImageMeaning from '../images/meaning.jpg';
+import { Navbar, Tabs, WordsTab } from './Navbar';
 
 const Wrapper = styled.div`
   padding: 2rem;
@@ -12,21 +13,6 @@ const GridWrapper = styled(Wrapper)`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   grid-gap: 1rem;
-`;
-
-const TableOfWords = styled.table`
-  td, th {
-    padding: .5rem 1rem;
-    border: 2px solid #eeeeee;
-  }
-`;
-
-const Searchbar = styled.input`
-  width: 100%;
-  padding: .5rem;
-  min-width: 0;
-  box-sizing: border-box;
-  margin-bottom: 1rem;
 `;
 
 const ExerciseCard = styled.div`
@@ -51,7 +37,7 @@ const CardImage = styled.div`
 
 const CardInformation = styled.div`
   z-index: 2;
-  background: rgba(255, 255, 255, .5);
+  background: rgba(255, 255, 255, .6);
   padding: 1rem;
 `;
 
@@ -124,23 +110,7 @@ const Exercise = ({ entries }) => {
         wordsCount={entries.length}
       />
       {activeTab === Tabs.Words
-        ? (
-          <Wrapper>
-            <Searchbar type="text" placeholder="Search..." onChange={() => {}}></Searchbar>
-            <TableOfWords>
-              <tr>
-                <th>Word</th>
-                <th>Meaning</th>
-              </tr>            
-              { entries.map((entry, i) => (
-                <tr key={i}>
-                  <td><strong>{entry.word}</strong></td>
-                  <td>{entry.meaning}</td>
-                </tr>
-              ))}
-            </TableOfWords>
-          </Wrapper>
-        )
+        ? (<WordsTab entries={entries} />)
         : (
           <GridWrapper>
             <ExerciseCard
@@ -148,7 +118,7 @@ const Exercise = ({ entries }) => {
                 setBeginExercise(true);
               }}
             >
-              <CardImage image={ImageStandard} />
+              <CardImage image={ImageStandard} loading="lazy" alt="Dictionary" />
               <CardInformation>
                 <h2>Standard test</h2>
                 <p>You are given the meaning, and you need to type the word</p>
@@ -159,6 +129,7 @@ const Exercise = ({ entries }) => {
                 setBeginExercise(true);
               }}
             >
+              <CardImage image={ImageMeaning} loading="lazy" alt="Matching the words" />
               <CardInformation>
                 <h2>Match the meaning</h2>
                 <p>You are given the word, and you need to choose the meaning</p>
