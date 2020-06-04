@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 const ExerciseLayout = styled.ul`
-  background: #eeeeee;
+  background: white;
   list-style-type: none;
   margin: 0;
   padding: .5rem;
