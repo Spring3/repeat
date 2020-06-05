@@ -5,6 +5,9 @@ import { Helmet } from 'react-helmet';
 import 'normalize.css';
 import { IndexView } from '../views/index';
 import { MainView } from '../views/main';
+import { Exercises } from '../views/Exercises';
+import { Dictionary } from '../views/Dictionary';
+import { Matching, Standard } from '../exercises';
 
 export default () => {
   return (
@@ -21,8 +24,14 @@ export default () => {
         </style>
       </Helmet>
       <Router>
-        <IndexView path="/" />
-        <MainView path="/main" />
+        <IndexView default />
+        <MainView path="/main">
+          <Exercises path="/exercises">
+            <Standard path="/standard" />
+            <Matching path="/matching" />
+          </Exercises>
+          <Dictionary path="/dictionary" />
+        </MainView>
       </Router>
     </DataContextProvider>
   );

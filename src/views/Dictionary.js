@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
-import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import debounce from 'lodash.debounce';
+import { useData } from '../contexts/DataContext';
 
 const Wrapper = styled.div`
   padding: 2rem;
@@ -22,7 +22,8 @@ const Searchbar = styled.input`
   margin-bottom: 1rem;
 `;
 
-const WordsTab = ({ entries }) => {
+const Dictionary = () => {
+  const { data: entries } = useData();
   const [searchResults, setSearchResults] = useState(entries);
 
   const onSearch = useCallback(event => {
@@ -65,13 +66,6 @@ const WordsTab = ({ entries }) => {
   )
 }
 
-WordsTab.propTypes = {
-  entries: PropTypes.arrayOf(PropTypes.shape({
-    word: PropTypes.string.isRequired,
-    meaning: PropTypes.string.isRequired
-  })).isRequired
-};
-
 export {
-  WordsTab
+  Dictionary
 };

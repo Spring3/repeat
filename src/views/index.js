@@ -25,7 +25,7 @@ const IndexView = () => {
   const onDrop = useCallback(async (acceptedFiles) => {
     const fileContents = await parseFiles(acceptedFiles);
     setData(fileContents);
-    navigate('/main');
+    navigate('/main/exercises');
   }, []);
 
   return (

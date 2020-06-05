@@ -1,25 +1,26 @@
-import React, { useState } from 'react';
-import { useData }  from '../contexts/DataContext';
-import { Navbar, Tabs } from '../components/Navbar';
-import { WordsTab } from '../components/WordsTab';
-import { ExercisesTab } from '../components/ExercisesTab';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Redirect } from '@reach/router';
+import { Navbar } from '../components/Navbar';
+import { useData } from '../contexts/DataContext';
 
-const MainView = () => {
-  const { data } = useData();
-  const [activeTab, setActiveTab] = useState(Tabs.Exercises);
+const MainView = ({ children }) => {
+  const { data: entries } = useData();
+
+  if (!entries.length) {
+    return <Redirect to="/" noThrow={true} />;
+  }
 
   return (
     <div>
-      <Navbar
-        onNavigate={tab => setActiveTab(tab)}
-        wordsCount={data.length}
-      />
-      {activeTab === Tabs.Words
-        ? (<WordsTab entries={data} />)
-        : (<ExercisesTab entries={data} />)
-      }
+      <Navbar wordsCount={entries.length} />
+      {children}
     </div>
   );
+}
+
+MainView.propTypes = {
+  children: PropTypes.arrayOf(PropTypes.element)
 }
 
 export {

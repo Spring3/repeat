@@ -1,53 +1,59 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { navigate, useMatch } from '@reach/router';
 import styled from '@emotion/styled';
 
-const ExerciseLayout = styled.ul`
+const StyledNavbar = styled.nav`
+  background: white;
+  padding: .7rem .5rem;
+`;
+
+const Menu = styled.ul`
   background: white;
   list-style-type: none;
   margin: 0;
-  padding: .5rem;
+  padding: .7rem .5rem;
   display: flex;
+`;
 
-  li {
-    padding: 1rem 2rem;
-    cursor: pointer;
-    font-weight: bold;
+const MenuItem = styled.li`
+  padding: 1rem 2rem;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: ${props => props.isActive ? 'black' : '#AAAAAA'};
+  transition: color ease .4s;
+
+  &:hover {
+    color: black;
   }
 `;
 
-const Tabs = {
-  Exercises: 'exersizes',
-  Words: 'words'
-};
-
-const Navbar = ({ onNavigate, wordsCount }) => {
+const Navbar = ({ wordsCount }) => {
   return (
-    <ExerciseLayout>
-      <li
-        onClick={() => onNavigate(Tabs.Exercises)}
-      >
-        Exercises
-      </li>
-      <li
-        onClick={() => onNavigate(Tabs.Words)}
-      >
-        Words ({wordsCount})
-      </li>
-    </ExerciseLayout>
+    <StyledNavbar>
+      <Menu>
+        <MenuItem
+          isActive={Boolean(useMatch('/main/exercises'))}
+          onClick={() => navigate('/main/exercises')}
+        >
+          Exercises
+        </MenuItem>
+        <MenuItem
+          isActive={Boolean(useMatch('/main/dictionary'))}
+          onClick={() => navigate('/main/dictionary')}
+        >
+          Words ({wordsCount})
+        </MenuItem>
+      </Menu>
+    </StyledNavbar>
   )
 }
 
 Navbar.propTypes = {
-  onNavigate: PropTypes.func.isRequired,
   wordsCount: PropTypes.number
 }
 
-Navbar.defaultProps = {
-  wordsCount: 0
-}
-
 export {
-  Navbar,
-  Tabs
+  Navbar
 };
