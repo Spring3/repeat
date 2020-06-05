@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import styled from "@emotion/styled"
 import { useData } from "../contexts/DataContext"
+import { CenteredWrapper } from '../components/CenteredWrapper';
 
 const StandardExercise = () => {
   const { data: entries } = useData()
@@ -49,7 +50,7 @@ const StandardExercise = () => {
   }
 
   return (
-    <div>
+    <CenteredWrapper>
       <div>
         <h3>{entry.meaning}</h3>
         <input type="text" onKeyUp={onKeyUp} placeholder="Answer" required />
@@ -60,7 +61,7 @@ const StandardExercise = () => {
           End Exercise
         </button>
       </div>
-    </div>
+    </CenteredWrapper>
   )
 }
 

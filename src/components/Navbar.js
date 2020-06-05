@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { navigate, useMatch } from '@reach/router';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 const StyledNavbar = styled.nav`
   background: white;
-  padding: .7rem .5rem;
+  padding: .7rem 4rem;
 `;
 
 const Menu = styled.ul`
@@ -30,18 +30,20 @@ const MenuItem = styled.li`
 `;
 
 const Navbar = ({ wordsCount }) => {
+  const history = useHistory();
+  const { path } = useRouteMatch();
   return (
     <StyledNavbar>
       <Menu>
         <MenuItem
-          isActive={Boolean(useMatch('/main/exercises'))}
-          onClick={() => navigate('/main/exercises')}
+          isActive={'/main/exercises' === path}
+          onClick={() => history.push('/main/exercises')}
         >
           Exercises
         </MenuItem>
         <MenuItem
-          isActive={Boolean(useMatch('/main/dictionary'))}
-          onClick={() => navigate('/main/dictionary')}
+          isActive={'/main/dictionary' === path}
+          onClick={() => history.push('/main/dictionary')}
         >
           Words ({wordsCount})
         </MenuItem>

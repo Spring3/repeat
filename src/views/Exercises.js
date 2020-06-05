@@ -1,18 +1,16 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { navigate, useMatch } from '@reach/router';
+import { Switch, Route, useRouteMatch, useHistory } from 'react-router-dom';
 
+import { Wrapper } from '../components/Wrapper';
 import ImageStandard from '../images/standard.jpg';
 import ImageMeaning from '../images/meaning.jpg';
-
-const Wrapper = styled.div`
-  padding: 2rem;
-`;
+import { Standard, Matching } from '../exercises';
 
 const GridWrapper = styled(Wrapper)`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  grid-gap: 1rem;
+  grid-gap: 2rem;
 `;
 
 const ExerciseCard = styled.div`
@@ -44,23 +42,18 @@ const CardInformation = styled.div`
   padding: 1rem;
 `;
 
-const Exercises = ({ children }) => {
-  const match = useMatch('/main/exercises');
-  
-  if (match === null) {
-    return children;
-  }
-
+const ExerciseCatalogue = () => {
+  const history = useHistory();
   return (
     <GridWrapper>
-      <ExerciseCard onClick={() => navigate("/main/exercises/standard")}>
+      <ExerciseCard onClick={() => history.push('/main/exercises/standard')}>
         <CardImage image={ImageStandard} loading="lazy" alt="Dictionary" />
         <CardInformation>
           <h2>Standard</h2>
           <p>You are given the meaning, and you need to type the word</p>
         </CardInformation>
       </ExerciseCard>
-      <ExerciseCard onClick={() => navigate("/main/exercises/matching")}>
+      <ExerciseCard onClick={() => history.push('/main/exercises/matching')}>
         <CardImage image={ImageMeaning} loading="lazy" alt="Matching the words" />
         <CardInformation>
           <h2>Match the meaning</h2>
@@ -68,6 +61,19 @@ const Exercises = ({ children }) => {
         </CardInformation>
       </ExerciseCard>
     </GridWrapper>
+  )
+}
+
+const Exercises = () => {
+  const { path } = useRouteMatch();
+  console.log('path in exercises', path);
+
+  return (
+    <Switch>
+      <Route exact path={path} component={ExerciseCatalogue} />
+      <Route exact path={`${path}/standard`} component={Standard} />
+      <Route exact path={`${path}/matching`} component={Matching} />
+    </Switch>
   )
 }
 

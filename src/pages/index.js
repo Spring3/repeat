@@ -1,13 +1,18 @@
 import React from 'react';
-import { Router } from '@reach/router';
+import styled from '@emotion/styled';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { DataContextProvider }  from '../contexts/DataContext';
 import { Helmet } from 'react-helmet';
 import 'normalize.css';
 import { IndexView } from '../views/index';
 import { MainView } from '../views/main';
-import { Exercises } from '../views/Exercises';
-import { Dictionary } from '../views/Dictionary';
-import { Matching, Standard } from '../exercises';
+import { Footer } from '../components/Footer';
+
+const FullpageWrapper = styled.div`
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+`;
 
 export default () => {
   return (
@@ -23,16 +28,16 @@ export default () => {
           `}
         </style>
       </Helmet>
-      <Router>
-        <IndexView default />
-        <MainView path="/main">
-          <Exercises path="/exercises">
-            <Standard path="/standard" />
-            <Matching path="/matching" />
-          </Exercises>
-          <Dictionary path="/dictionary" />
-        </MainView>
-      </Router>
+
+      <FullpageWrapper>
+        <Router>
+          <Switch>
+            <Route exact path="/" component={IndexView} />
+            <Route path="/main" component={MainView} />
+          </Switch>
+        </Router>
+        <Footer />
+      </FullpageWrapper>
     </DataContextProvider>
   );
 };

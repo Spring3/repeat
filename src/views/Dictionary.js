@@ -2,10 +2,8 @@ import React, { useState, useCallback } from 'react';
 import styled from '@emotion/styled';
 import debounce from 'lodash.debounce';
 import { useData } from '../contexts/DataContext';
+import { Wrapper } from '../components/Wrapper';
 
-const Wrapper = styled.div`
-  padding: 2rem;
-`;
 
 const TableOfWords = styled.table`
   td, th {
