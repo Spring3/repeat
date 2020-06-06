@@ -8,6 +8,7 @@ const ProgressWrapper = styled.div`
 `;
 
 const Bar = styled.div`
+  transition: width ease-in .5s;
   background: ${props => props.color};
   width: ${props => props.percent}%;
   height: 100%;

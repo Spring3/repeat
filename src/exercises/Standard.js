@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react"
+import React, { useState } from "react"
 import styled from "@emotion/styled"
 import { useData } from "../contexts/DataContext"
 import { CenteredWrapper } from '../components/CenteredWrapper';
@@ -7,6 +7,9 @@ import { Progressbar } from '../components/Progressbar';
 import Confetti from 'react-confetti';
 import tweenFunctions from 'tween-functions';
 import { useWindowSize } from '../hooks/useWindowSize';
+import CommentCheckOutlineIcon from 'mdi-react/CommentCheckOutlineIcon';
+import CommentRemoveOutlineIcon from 'mdi-react/CommentRemoveOutlineIcon';
+import FileChartOutlineIcon from 'mdi-react/FileChartOutlineIcon';
 
 const TestWrapper = styled.div`
   padding: 2rem 4rem;
@@ -35,6 +38,7 @@ const TaskProgress = styled.div`
 
   .index {
     z-index: 1;
+    font-size: .8rem;
     background: rgba(255, 255, 255, .5);
   }
 `;
@@ -50,7 +54,35 @@ const TaskInformation = styled.div`
   }
 `;
 
-const AbsoluteProgressbar = styled(Progressbar)`
+const Results = styled.div`
+  h2 {
+    color: lightgreen;
+  }
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+`;
+
+const ResultsStatistics = styled.ul`
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  li {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    svg {
+      margin-bottom: 10px;
+    }
+  }
 `;
 
 const StandardExercise = () => {
@@ -69,17 +101,20 @@ const StandardExercise = () => {
 
   const onKeyUp = e => {
     if (e.keyCode === ENTER) {
-      setConfettiTime(true);
+      const nextIndex = progress.index + 1;
+      if (nextIndex === entries.length) {
+        setConfettiTime(true);
+      }
       const { value } = e.target
       if (value.trim().toLowerCase() === entry.word) {
         setProgress({
-          index: progress.index + 1,
+          index: nextIndex,
           correct: [...progress.correct, progress.index],
           mistakes: progress.mistakes,
         })
       } else {
         setProgress({
-          index: progress.index + 1,
+          index: nextIndex,
           correct: progress.correct,
           mistakes: [...progress.mistakes, progress.index],
         })
@@ -88,24 +123,9 @@ const StandardExercise = () => {
     }
   }
 
-  if (progress.index === entries.length) {
-    return (
-      <div>
-        <h2>Done!</h2>
-        <p>Correct: {progress.correct.length}</p>
-        <p>Mistakes: {progress.mistakes.length}</p>
-        <p>
-          Ratio: {((progress.correct.length / entries.length) * 100).toFixed(2)}
-          %
-        </p>
-      </div>
-    )
-  }
-
   const progressPercent = Number(progress.index / entries.length * 100).toFixed(2);
 
   const onComplete = (confetti) => {
-    console.log('reset');
     setConfettiTime(false);
     confetti.reset();
   };
@@ -113,17 +133,38 @@ const StandardExercise = () => {
   return (
     <CenteredWrapper>
       <TestWrapper>
-        <TaskProgress>
-          <div className="index">{progress.index + 1} / {entries.length}</div>
-          <AbsoluteProgressbar thickness={2} percent={progressPercent} />
-        </TaskProgress>
-        <Task>
-          <TaskInformation>
-            <h4>Meaning:</h4>
-            <div className="meaning">{entry.meaning}</div>
-          </TaskInformation>
-          <Input type="text" onKeyUp={onKeyUp} placeholder="Word:" required />
-        </Task>
+        {
+          progress.index === entries.length
+          ? (
+            <Results>
+              <h2>Well Done!</h2>
+              <div>
+                <button>Repeat again</button>
+                <button>Repeat with failed</button>
+              </div>
+              <ResultsStatistics>
+                <li><CommentCheckOutlineIcon color="lightgreen" /> {progress.correct.length}</li>
+                <li><CommentRemoveOutlineIcon color="red" /> {progress.mistakes.length}</li>
+                <li><FileChartOutlineIcon color="skyblue" /> {((progress.correct.length / entries.length) * 100).toFixed(2)}%</li>
+              </ResultsStatistics>
+            </Results>
+          )
+          : (
+            <>
+              <TaskProgress>
+                <div className="index">{progress.index + 1} / {entries.length}</div>
+                <Progressbar thickness={2} percent={progressPercent} />
+              </TaskProgress>
+              <Task>
+                <TaskInformation>
+                  <h4>Meaning:</h4>
+                  <div className="meaning">{entry.meaning}</div>
+                </TaskInformation>
+                <Input type="text" onKeyUp={onKeyUp} placeholder="Word:" required />
+              </Task>
+            </>
+          )
+        }
       </TestWrapper>
       <Confetti
         height={windowSize.height}
