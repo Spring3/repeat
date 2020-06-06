@@ -18,7 +18,9 @@ const IndexView = () => {
 
   const onDrop = useCallback(async (acceptedFiles) => {
     const fileContents = await parseFiles(acceptedFiles);
-    setData(fileContents);
+    console.log('fileContents', fileContents);
+    console.log(fileContents.filter(({ word, meaning }) => (word && meaning) ));
+    setData(fileContents.filter(({ word, meaning }) => (word && meaning) ));
     history.push('/main/exercises');
   }, []);
 
