@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 
 const StyledFooter = styled.footer`
   background: white;
-  position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;

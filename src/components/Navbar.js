@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 const StyledNavbar = styled.nav`
   background: white;
   padding: .7rem 4rem;
+  border-bottom: 2px solid salmon;
 `;
 
 const Menu = styled.ul`
@@ -21,7 +22,7 @@ const MenuItem = styled.li`
   cursor: pointer;
   font-weight: bold;
   font-size: 1.1rem;
-  color: ${props => props.isActive ? 'black' : '#AAAAAA'};
+  color: ${props => props.isActive ? 'black' : '#CCCCCC'};
   transition: color ease .4s;
 
   &:hover {
@@ -31,18 +32,19 @@ const MenuItem = styled.li`
 
 const Navbar = ({ wordsCount }) => {
   const history = useHistory();
-  const { path } = useRouteMatch();
+  const location = useLocation();
+
   return (
     <StyledNavbar>
       <Menu>
         <MenuItem
-          isActive={'/main/exercises' === path}
+          isActive={'/main/exercises' === location.pathname}
           onClick={() => history.push('/main/exercises')}
         >
           Exercises
         </MenuItem>
         <MenuItem
-          isActive={'/main/dictionary' === path}
+          isActive={'/main/dictionary' === location.pathname}
           onClick={() => history.push('/main/dictionary')}
         >
           Words ({wordsCount})

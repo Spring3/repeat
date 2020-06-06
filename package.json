@@ -18,13 +18,16 @@
     "gatsby": "^2.21.21",
     "gatsby-plugin-react-helmet": "^3.3.1",
     "lodash.debounce": "^4.0.8",
+    "mdi-react": "^7.3.0",
     "normalize.css": "^8.0.1",
     "papaparse": "^5.2.0",
     "react": "^16.12.0",
+    "react-confetti": "^5.0.1",
     "react-dom": "^16.12.0",
     "react-dropzone": "^11.0.1",
     "react-helmet": "^6.0.0",
-    "react-router-dom": "^5.2.0"
+    "react-router-dom": "^5.2.0",
+    "tween-functions": "^1.2.0"
   },
   "devDependencies": {
     "gatsby-plugin-emotion": "^4.3.1",

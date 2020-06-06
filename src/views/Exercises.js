@@ -66,7 +66,6 @@ const ExerciseCatalogue = () => {
 
 const Exercises = () => {
   const { path } = useRouteMatch();
-  console.log('path in exercises', path);
 
   return (
     <Switch>

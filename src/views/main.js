@@ -9,8 +9,6 @@ const MainView = () => {
   const { data: entries } = useData();
   const { path } = useRouteMatch();
 
-  console.log('path in main', path)
-
   if (!entries.length) {
     return <Redirect to="/" />;
   }
