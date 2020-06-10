@@ -191,8 +191,6 @@ const StandardExercise = () => {
 
   const onTabClick = tabIndex => setSelectedTab(tabIndex);
 
-  console.log(selectedTab)
-
   return (
     <CenteredWrapper>
       <TestWrapper showResults={progress.index === entries.length}>

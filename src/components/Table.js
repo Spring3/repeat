@@ -4,8 +4,6 @@ import styled from '@emotion/styled';
 import { css } from '@emotion/core';
 
 const TableOfWords = styled.table`
-  display: block;
-  overflow-y: scroll;
   td, th {
     padding: .5rem 1rem;
     border: 2px solid #eeeeee;
@@ -13,6 +11,9 @@ const TableOfWords = styled.table`
   }
 
   ${props => props.height && css`
+    display: block;
+    overflow-y: scroll;
+    
     th {
       position: sticky;
       top: 0;
