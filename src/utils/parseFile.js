@@ -22,13 +22,10 @@ const parseFiles = (acceptedFiles) => {
         error: error => reject(error),
         delimiter: (value) => {
           if (DelimiterRegexp.SEMICOLON.test(value)) {
-            console.log('semicolon');
             return ';';
           } else if (DelimiterRegexp.COMMA.test(value)) {
-            console.log('comma');
             return ',';
           } else if (DelimiterRegexp.VERTICAL_LINE.test(value)) {
-            console.log('vertical line');
             return '|';
           }
 

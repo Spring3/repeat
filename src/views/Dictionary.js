@@ -3,14 +3,7 @@ import styled from '@emotion/styled';
 import debounce from 'lodash.debounce';
 import { useData } from '../contexts/DataContext';
 import { Wrapper } from '../components/Wrapper';
-
-
-const TableOfWords = styled.table`
-  td, th {
-    padding: .5rem 1rem;
-    border: 2px solid #eeeeee;
-  }
-`;
+import { Table } from '../components/Table';
 
 const Searchbar = styled.input`
   width: 100%;
@@ -41,22 +34,7 @@ const Dictionary = () => {
       {
         searchResults.length
         ? (
-          <TableOfWords width="100%">
-            <thead>
-              <tr>
-                <th>Word</th>
-                <th>Meaning</th>
-              </tr>
-            </thead>
-            <tbody>
-              { searchResults.map((entry, i) => (
-                <tr key={i}>
-                  <td><strong>{entry.word}</strong></td>
-                  <td>{entry.meaning}</td>
-                </tr>
-              ))}
-            </tbody>
-          </TableOfWords>
+          <Table entries={searchResults} />
         )
         : (<p>No results that match your search query</p>)
       }
