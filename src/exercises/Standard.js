@@ -14,6 +14,7 @@ import CloseIcon from 'mdi-react/CloseIcon';
 import { Button } from '../components/Button';
 import { css } from "@emotion/core";
 import { Tabs, TabList, TabPanel, Tab } from 'react-tabs';
+import { useHistory } from 'react-router-dom';
 import { Table } from '../components/Table';
 
 const TestWrapper = styled.div`
@@ -57,6 +58,8 @@ const TaskProgress = styled.div`
 `;
 
 const TaskInformation = styled.div`
+  margin-top: 2rem;
+  margin-bottom: 2rem;
   h4 {
     color: #BBBBBB;
   }
@@ -139,7 +142,9 @@ const CustomTab = ({ children, isActive }) => {
 CustomTab.tabsRole = 'Tab';
 
 const StandardExercise = () => {
-  const { data: entries } = useData()
+  const { data } = useData();
+  const [entries, setEntries] = useState(data);
+  const history = useHistory();
   const [selectedTab, setSelectedTab] = useState(0);
   const windowSize = useWindowSize();
   const [confettiTime, setConfettiTime] = useState(false)
@@ -148,7 +153,7 @@ const StandardExercise = () => {
     index: 0,
     correct: [],
     mistakes: [],
-    mainMistake: 'Test'
+    mainMistake: ''
   })
 
   const entry = entries[progress.index]
@@ -167,7 +172,7 @@ const StandardExercise = () => {
         setProgress({
           ...progress,
           index: nextIndex,
-          correct: [...progress.correct, { index: progress.index, entry }],
+          correct: [...progress.correct, { index: progress.index, ...entry }],
           mistakes: progress.mistakes,
         })
       } else {
@@ -175,7 +180,7 @@ const StandardExercise = () => {
           ...progress,
           index: nextIndex,
           correct: progress.correct,
-          mistakes: [...progress.mistakes, { index: progress.index, entry }],
+          mistakes: [...progress.mistakes, { index: progress.index, ...entry }],
         })
       }
       e.target.value = ""
@@ -198,16 +203,14 @@ const StandardExercise = () => {
           progress.index === entries.length
           ? (
             <Results>
-              <CloseIcon size={30} color="#999999" />
+              <CloseIcon size={30} color="#999999" onClick={() => history.replace('/main/exercises')} />
               <h1>Well Done!</h1>
               <StyledTabs selectedIndex={selectedTab} onSelect={onTabClick}>
                 <StyledTabList>
                   <CustomTab
                     isActive={selectedTab === 0}
                   >Statistics</CustomTab>
-                  <CustomTab
-                    isActive={selectedTab === 1}
-                  >Words to repeat</CustomTab>
+                  {progress.mistakes.length ? (<CustomTab isActive={selectedTab === 1} >Words to repeat</CustomTab>) : null}
                 </StyledTabList>
                 <TabPanel>
                   <ResultsStatistics>
@@ -221,17 +224,34 @@ const StandardExercise = () => {
                     </li>
                     <li>
                       <AlertCircleOutlineIcon color="orange" size={28} /> Most complicated word: &nbsp;
-                      <strong>{progress.mainMistake}</strong>
+                      <strong>{progress.mainMistake || '-'}</strong>
                     </li>
                   </ResultsStatistics>
                 </TabPanel>
                 <TabPanel>
-                  <Table height="300px" entries={progress.mistakes.map(e => e.entry)} />
+                  <Table height="300px" entries={progress.mistakes} />
                 </TabPanel>
               </StyledTabs>
               <ButtonContainer>
-                <Button>Repeat only failed</Button>
-                <Button>Repeat</Button>
+                <Button
+                  onClick={() => {
+                    setEntries(progress.mistakes);
+                    setProgress({
+                      index: 0,
+                      correct: [],
+                      mistakes: [],
+                      mainMistake: ''
+                    });
+                  }}
+                >Repeat only failed</Button>
+                <Button
+                  onClick={() => setProgress({
+                    index: 0,
+                    correct: [],
+                    mistakes: [],
+                    mainMistake: ''
+                  })}
+                >Repeat</Button>
               </ButtonContainer>
             </Results>
           )
