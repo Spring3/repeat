@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useCallback } from "react"
 import styled from "@emotion/styled"
 import { useData } from "../contexts/DataContext"
 import { CenteredWrapper } from '../components/CenteredWrapper';
@@ -7,16 +7,9 @@ import { Progressbar } from '../components/Progressbar';
 import Confetti from 'react-confetti';
 import tweenFunctions from 'tween-functions';
 import { useWindowSize } from '../hooks/useWindowSize';
-import CommentCheckOutlineIcon from 'mdi-react/CommentCheckOutlineIcon';
-import CommentRemoveOutlineIcon from 'mdi-react/CommentRemoveOutlineIcon';
-import AlertCircleOutlineIcon from 'mdi-react/AlertCircleOutlineIcon';
-import CloseIcon from 'mdi-react/CloseIcon';
-import { Button } from '../components/Button';
 import { css } from "@emotion/core";
-import { Tabs, TabList, TabPanel, Tab } from 'react-tabs';
-import { useHistory } from 'react-router-dom';
-import { Table } from '../components/Table';
 import { shuffle } from '../utils/shuffleArray';
+import { ExerciseResults } from '../components/ExerciseResults';
 
 const TestWrapper = styled.div`
   padding: 2rem 4rem;
@@ -71,82 +64,9 @@ const TaskInformation = styled.div`
   }
 `;
 
-const Results = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-  flex-grow: 1;
-  width: 100%;
-
-  & > svg:first-of-type {
-    align-self: flex-end;
-    position: absolute;
-    cursor: pointer;
-    &:hover {
-      fill: black;
-    }
-  }
-`;
-
-const ResultsStatistics = styled.ul`
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-
-  li {
-    display: flex;
-    padding: 0.5rem 1rem;
-    font-size: 1.1rem;
-    align-items: center;
-    svg {
-      margin-right: 10px;
-    }
-  }
-`;
-
-const ButtonContainer = styled.div`
-  align-self: flex-end;
-  margin-top: 2rem;
-  & > button {
-    margin-left: 1rem;
-  }
-`;
-
-const StyledTabs = styled(Tabs)`
-  flex-grow: 1;
-  margin-top: 1rem;
-`;
-
-const StyledTabList = styled(TabList)`
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  margin-bottom: 2rem;
-  display: flex;
-  justify-content: space-evenly;
-`;
-
-const StyledTab = styled(Tab)`
-  padding: 0.5rem 1rem;
-  border-bottom: 2px solid ${props => props.isActive ? 'black' : '#DDDDDD'}
-`;
-
-const CustomTab = ({ children, isActive }) => {
-  return (
-    <StyledTab isActive={isActive}>
-      {children}
-    </StyledTab>
-  );
-}
-
-CustomTab.tabsRole = 'Tab';
-
 const StandardExercise = () => {
   const { data } = useData();
   const [entries, setEntries] = useState(shuffle(data));
-  const history = useHistory();
-  const [selectedTab, setSelectedTab] = useState(0);
   const windowSize = useWindowSize();
   const [confettiTime, setConfettiTime] = useState(false)
   // TODO: move to context
@@ -195,7 +115,17 @@ const StandardExercise = () => {
     confetti.reset();
   };
 
-  const onTabClick = tabIndex => setSelectedTab(tabIndex);
+  const onRepeat = useCallback((onlyFailed) => {
+    if (onlyFailed) {
+      setEntries(progress.mistakes)
+    }
+    setProgress({
+      index: 0,
+      correct: [],
+      mistakes: [],
+      mainMistake: "",
+    })
+  }, [entries]);
 
   return (
     <CenteredWrapper>
@@ -203,58 +133,11 @@ const StandardExercise = () => {
         {
           progress.index === entries.length
           ? (
-            <Results>
-              <CloseIcon size={30} color="#999999" onClick={() => history.replace('/main/exercises')} />
-              <h1>Well Done!</h1>
-              <StyledTabs selectedIndex={selectedTab} onSelect={onTabClick}>
-                <StyledTabList>
-                  <CustomTab
-                    isActive={selectedTab === 0}
-                  >Statistics</CustomTab>
-                  {progress.mistakes.length ? (<CustomTab isActive={selectedTab === 1} >Words to repeat</CustomTab>) : null}
-                </StyledTabList>
-                <TabPanel>
-                  <ResultsStatistics>
-                    <li>
-                      <CommentCheckOutlineIcon color="lightgreen" size={28} /> Correct answers: &nbsp;
-                      <strong>{progress.correct.length} ({(progress.correct.length / entries.length * 100).toFixed(2)})%</strong>
-                    </li>
-                    <li>
-                      <CommentRemoveOutlineIcon color="red" size={28} /> Wrong answers: &nbsp;
-                      <strong>{progress.mistakes.length} ({(progress.mistakes.length / entries.length * 100).toFixed(2)})%</strong>
-                    </li>
-                    <li>
-                      <AlertCircleOutlineIcon color="orange" size={28} /> Most complicated word: &nbsp;
-                      <strong>{progress.mainMistake || '-'}</strong>
-                    </li>
-                  </ResultsStatistics>
-                </TabPanel>
-                <TabPanel>
-                  <Table height="300px" entries={progress.mistakes} />
-                </TabPanel>
-              </StyledTabs>
-              <ButtonContainer>
-                <Button
-                  onClick={() => {
-                    setEntries(progress.mistakes);
-                    setProgress({
-                      index: 0,
-                      correct: [],
-                      mistakes: [],
-                      mainMistake: ''
-                    });
-                  }}
-                >Repeat only failed</Button>
-                <Button
-                  onClick={() => setProgress({
-                    index: 0,
-                    correct: [],
-                    mistakes: [],
-                    mainMistake: ''
-                  })}
-                >Repeat</Button>
-              </ButtonContainer>
-            </Results>
+            <ExerciseResults
+              onRepeat={onRepeat}
+              progress={progress}
+              entries={entries}
+            />
           )
           : (
             <>

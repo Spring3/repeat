@@ -1,21 +1,27 @@
 import { useEffect, useState } from 'react';
 
 const useWindowSize = () => {
-  const [bounds, setBounds] = useState({
+  const [bounds, setBounds] = useState(typeof window !== 'undefined' && {
     height: window.innerHeight,
     width: window.innerWidth
   })
   useEffect(() => {
     const resizeHandler = () => {
-      setBounds({
-        height: window.innerHeight,
-        width: window.innerWidth
-      });
+      if (typeof window !== 'undefined') {
+        setBounds({
+          height: window.innerHeight,
+          width: window.innerWidth
+        });
+      }
     }
-    window.addEventListener('resize', resizeHandler);
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', resizeHandler);
+    }
 
     return () => {
-      window.removeEventListener('resize', resizeHandler);
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('resize', resizeHandler);
+      }
     }
   }, []);
 
