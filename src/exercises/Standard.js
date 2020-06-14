@@ -16,6 +16,7 @@ import { css } from "@emotion/core";
 import { Tabs, TabList, TabPanel, Tab } from 'react-tabs';
 import { useHistory } from 'react-router-dom';
 import { Table } from '../components/Table';
+import { shuffle } from '../utils/shuffleArray';
 
 const TestWrapper = styled.div`
   padding: 2rem 4rem;
@@ -143,7 +144,7 @@ CustomTab.tabsRole = 'Tab';
 
 const StandardExercise = () => {
   const { data } = useData();
-  const [entries, setEntries] = useState(data);
+  const [entries, setEntries] = useState(shuffle(data));
   const history = useHistory();
   const [selectedTab, setSelectedTab] = useState(0);
   const windowSize = useWindowSize();
