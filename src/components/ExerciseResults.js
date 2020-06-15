@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import PropTypes from 'prop-types';
-import styled from '@emotion/styled';
-import CommentCheckOutlineIcon from 'mdi-react/CommentCheckOutlineIcon';
-import CommentRemoveOutlineIcon from 'mdi-react/CommentRemoveOutlineIcon';
-import AlertCircleOutlineIcon from 'mdi-react/AlertCircleOutlineIcon';
-import CloseIcon from 'mdi-react/CloseIcon';
-import { Table } from './Table';
-import { Button } from './Button';
-import { Tabs, TabList, TabPanel, Tab } from 'react-tabs';
-import { useHistory } from 'react-router-dom';
+import React, { useState } from "react"
+import PropTypes from "prop-types"
+import styled from "@emotion/styled"
+import CommentCheckOutlineIcon from "mdi-react/CommentCheckOutlineIcon"
+import CommentRemoveOutlineIcon from "mdi-react/CommentRemoveOutlineIcon"
+import AlertCircleOutlineIcon from "mdi-react/AlertCircleOutlineIcon"
+import StickerCheckOutlineIcon from 'mdi-react/StickerCheckOutlineIcon';
+import CloseIcon from "mdi-react/CloseIcon"
+import { Table } from "./Table"
+import { Button } from "./Button"
+import { useHistory } from "react-router-dom"
 
 const Results = styled.div`
   display: flex;
@@ -26,7 +26,7 @@ const Results = styled.div`
       fill: black;
     }
   }
-`;
+`
 
 const ResultsStatistics = styled.ul`
   list-style-type: none;
@@ -42,7 +42,7 @@ const ResultsStatistics = styled.ul`
       margin-right: 10px;
     }
   }
-`;
+`
 
 const ButtonContainer = styled.div`
   align-self: flex-end;
@@ -50,42 +50,76 @@ const ButtonContainer = styled.div`
   & > button {
     margin-left: 1rem;
   }
-`;
+`
 
-const StyledTabs = styled(Tabs)`
-  flex-grow: 1;
-  margin-top: 1rem;
-`;
-
-const StyledTabList = styled(TabList)`
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  margin-bottom: 2rem;
+const FlexMiddleRow = styled.div`
   display: flex;
-  justify-content: space-evenly;
+  justify-content: center;
 `;
-
-const StyledTab = styled(Tab)`
-  padding: 0.5rem 1rem;
-  border-bottom: 2px solid ${props => props.isActive ? 'black' : '#DDDDDD'}
-`;
-
-const CustomTab = ({ children, isActive }) => {
-  return (
-    <StyledTab isActive={isActive}>
-      {children}
-    </StyledTab>
-  );
-}
-
-CustomTab.tabsRole = 'Tab';
 
 const ExerciseResults = ({ onRepeat, progress, entries }) => {
-  const history = useHistory();
-  const [selectedTab, setSelectedTab] = useState(0);
+  const history = useHistory()
+  const [step, setStep] = useState(1);
 
-  const onTabClick = tabIndex => setSelectedTab(tabIndex);
+  const callRepeat = (onlyWithFailed) => {
+    setStep(1);
+    onRepeat(onlyWithFailed)
+  };
+
+  const renderFormStep = () => {
+    switch (step) {
+      case 2:
+        const hasAnythingToRepeat = Boolean(progress.mistakes.length);
+        return (
+          <>
+            <h1>{hasAnythingToRepeat ? 'Words to repeat' : 'You got all words correctly!'}</h1>
+            {hasAnythingToRepeat
+              ? <Table height="300px" entries={progress.mistakes} />
+              : <FlexMiddleRow><StickerCheckOutlineIcon color="darkseagreen" size={120} /></FlexMiddleRow>
+            }
+            <ButtonContainer>
+              {hasAnythingToRepeat ? <Button onClick={() => callRepeat(true)}>Repeat only failed</Button> : null}
+              <Button onClick={() => callRepeat()}>Repeat the test</Button>
+              <Button onClick={() => history.replace("/main/exercises")}>Close</Button>
+            </ButtonContainer>
+          </>
+        )
+      default:
+        return (
+          <>
+            <h1>Well Done!</h1>
+            <ResultsStatistics>
+              <li>
+                <CommentCheckOutlineIcon color="lightgreen" size={28} /> Correct
+                answers: &nbsp;
+                <strong>
+                  {progress.correct.length} (
+                  {((progress.correct.length / entries.length) * 100).toFixed(2)}
+                  )%
+                </strong>
+              </li>
+              <li>
+                <CommentRemoveOutlineIcon color="red" size={28} /> Wrong answers:
+                &nbsp;
+                <strong>
+                  {progress.mistakes.length} (
+                  {((progress.mistakes.length / entries.length) * 100).toFixed(2)}
+                  )%
+                </strong>
+              </li>
+              <li>
+                <AlertCircleOutlineIcon color="orange" size={28} /> Most complicated
+                word: &nbsp;
+                <strong>{progress.mainMistake || "-"}</strong>
+              </li>
+            </ResultsStatistics>
+            <ButtonContainer>
+              <Button onClick={() => setStep(step + 1)}>Next</Button>
+            </ButtonContainer>
+          </>
+        );
+    }
+  }
 
   return (
     <Results>
@@ -94,57 +128,8 @@ const ExerciseResults = ({ onRepeat, progress, entries }) => {
         color="#999999"
         onClick={() => history.replace("/main/exercises")}
       />
-      <h1>Well Done!</h1>
-      <StyledTabs selectedIndex={selectedTab} onSelect={onTabClick}>
-        <StyledTabList>
-          <CustomTab isActive={selectedTab === 0}>Statistics</CustomTab>
-          {progress.mistakes.length ? (
-            <CustomTab isActive={selectedTab === 1}>Words to repeat</CustomTab>
-          ) : null}
-        </StyledTabList>
-        <TabPanel>
-          <ResultsStatistics>
-            <li>
-              <CommentCheckOutlineIcon color="lightgreen" size={28} /> Correct
-              answers: &nbsp;
-              <strong>
-                {progress.correct.length} (
-                {((progress.correct.length / entries.length) * 100).toFixed(2)}
-                )%
-              </strong>
-            </li>
-            <li>
-              <CommentRemoveOutlineIcon color="red" size={28} /> Wrong answers:
-              &nbsp;
-              <strong>
-                {progress.mistakes.length} (
-                {((progress.mistakes.length / entries.length) * 100).toFixed(2)}
-                )%
-              </strong>
-            </li>
-            <li>
-              <AlertCircleOutlineIcon color="orange" size={28} /> Most
-              complicated word: &nbsp;
-              <strong>{progress.mainMistake || "-"}</strong>
-            </li>
-          </ResultsStatistics>
-        </TabPanel>
-        <TabPanel>
-          <Table height="300px" entries={progress.mistakes} />
-        </TabPanel>
-      </StyledTabs>
-      <ButtonContainer>
-        <Button
-          onClick={() => onRepeat(true)}
-        >
-          Repeat only failed
-        </Button>
-        <Button
-          onClick={() => onRepeat()}
-        >
-          Repeat
-        </Button>
-      </ButtonContainer>
+      {renderFormStep()}
+      
     </Results>
   )
 }
@@ -153,24 +138,26 @@ ExerciseResults.propTypes = {
   onRepeat: PropTypes.func.isRequired,
   progress: PropTypes.shape({
     index: PropTypes.number.isRequired,
-    correct: PropTypes.arrayOf(PropTypes.shape({
-      index: PropTypes.number.isRequired,
-      word: PropTypes.string.isRequired,
-      meaning: PropTypes.string.isRequired
-    })).isRequired,
-    mistakes: PropTypes.arrayOf(PropTypes.shape({
-      index: PropTypes.number.isRequired,
-      word: PropTypes.string.isRequired,
-      meaning: PropTypes.string.isRequired
-    })).isRequired,
+    correct: PropTypes.arrayOf(
+      PropTypes.shape({
+        index: PropTypes.number.isRequired,
+        word: PropTypes.string.isRequired,
+        meaning: PropTypes.string.isRequired,
+      })
+    ).isRequired,
+    mistakes: PropTypes.arrayOf(
+      PropTypes.shape({
+        index: PropTypes.number.isRequired,
+        word: PropTypes.string.isRequired,
+        meaning: PropTypes.string.isRequired,
+      })
+    ).isRequired,
     mainMistake: PropTypes.string,
   }).isRequired,
-  entries: PropTypes.shape({
+  entries: PropTypes.arrayOf(PropTypes.shape({
     word: PropTypes.string.isRequired,
-    meaning: PropTypes.string.isRequired
-  }).isRequired
+    meaning: PropTypes.string.isRequired,
+  })).isRequired,
 }
 
-export {
-  ExerciseResults
-}
+export { ExerciseResults }

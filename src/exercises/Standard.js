@@ -115,17 +115,15 @@ const StandardExercise = () => {
     confetti.reset();
   };
 
-  const onRepeat = useCallback((onlyFailed) => {
-    if (onlyFailed) {
-      setEntries(progress.mistakes)
-    }
+  const onRepeat = (onlyFailed) => {
+    setEntries(shuffle(onlyFailed ? progress.mistakes : data));
     setProgress({
       index: 0,
       correct: [],
       mistakes: [],
       mainMistake: "",
     })
-  }, [entries]);
+  };
 
   return (
     <CenteredWrapper>
