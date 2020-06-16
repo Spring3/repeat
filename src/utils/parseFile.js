@@ -1,4 +1,5 @@
 import parser from "papaparse"
+import uniqBy from "lodash.uniqby"
 
 const DelimiterRegexp = {
   SEMICOLON: /^(\w+(\s)?)+;/,
@@ -6,8 +7,8 @@ const DelimiterRegexp = {
   VERTICAL_LINE: /^(\w+(\s)?)+\|/,
 }
 
-const parseFiles = acceptedFiles => {
-  return Promise.all(
+const parseFiles = async acceptedFiles => {
+  const fileContents = await Promise.all(
     acceptedFiles.map(
       file =>
         new Promise((resolve, reject) => {
@@ -43,6 +44,20 @@ const parseFiles = acceptedFiles => {
         })
     )
   )
+
+  const nonEmptyEntries = fileContents.reduce(
+    (acc, contents) =>
+      acc.concat(
+        contents.reduce((acc, { word, meaning }) => {
+          if (!word || !meaning) {
+            return acc
+          }
+          return [...acc, { word: word.trim().toLowerCase(), meaning }]
+        }, [])
+      ),
+    []
+  )
+  return uniqBy(nonEmptyEntries, entry => entry.word)
 }
 
 export { parseFiles }

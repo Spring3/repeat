@@ -8,7 +8,7 @@ const StyledDropzone = styled.div`
   background: #fafafa;
   border: 2px dashed #eeeeee;
   border-radius: 5px;
-  width: 440px;
+  min-width: 440px;
 
   & > p {
     color: #bdbdbd;

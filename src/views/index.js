@@ -5,7 +5,6 @@ import { Dropzone } from "../components/Dropzone"
 import { parseFiles } from "../utils/parseFile"
 import styled from "@emotion/styled"
 import { CenteredWrapper } from "../components/CenteredWrapper"
-import uniqBy from "lodash.uniqby"
 
 const Notice = styled.small`
   display: block;
@@ -25,23 +24,10 @@ const IndexView = () => {
 
   const onDrop = useCallback(async acceptedFiles => {
     const fileContents = await parseFiles(acceptedFiles)
-    const nonEmptyEntries = fileContents.reduce(
-      (acc, contents) =>
-        acc.concat(
-          contents.reduce((acc, { word, meaning }) => {
-            if (!word || !meaning) {
-              return acc
-            }
-            return [...acc, { word: word.trim().toLowerCase(), meaning }]
-          }, [])
-        ),
-      []
-    )
-    const uniqueNonEmptyEntries = uniqBy(nonEmptyEntries, entry => entry.word)
-    if (!uniqueNonEmptyEntries.length) {
+    if (!fileContents.length) {
       setError("The file you have uploaded, appears to be empty.")
     } else {
-      setData(uniqueNonEmptyEntries)
+      setData(fileContents)
       history.push("/main/exercises")
     }
   }, [])

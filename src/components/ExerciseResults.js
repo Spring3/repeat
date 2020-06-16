@@ -4,11 +4,11 @@ import styled from "@emotion/styled"
 import CommentCheckOutlineIcon from "mdi-react/CommentCheckOutlineIcon"
 import CommentRemoveOutlineIcon from "mdi-react/CommentRemoveOutlineIcon"
 import AlertCircleOutlineIcon from "mdi-react/AlertCircleOutlineIcon"
-import StickerCheckOutlineIcon from 'mdi-react/StickerCheckOutlineIcon';
-import CloseIcon from "mdi-react/CloseIcon"
+import StickerCheckOutlineIcon from "mdi-react/StickerCheckOutlineIcon"
 import { Table } from "./Table"
 import { Button } from "./Button"
 import { useHistory } from "react-router-dom"
+import CloseIcon from "mdi-react/CloseIcon"
 
 const Results = styled.div`
   display: flex;
@@ -17,6 +17,7 @@ const Results = styled.div`
   height: 100%;
   flex-grow: 1;
   width: 100%;
+  position: absolute;
 
   & > svg:first-of-type {
     align-self: flex-end;
@@ -55,32 +56,45 @@ const ButtonContainer = styled.div`
 const FlexMiddleRow = styled.div`
   display: flex;
   justify-content: center;
-`;
+`
 
 const ExerciseResults = ({ onRepeat, progress, entries }) => {
   const history = useHistory()
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(1)
 
-  const callRepeat = (onlyWithFailed) => {
-    setStep(1);
+  const callRepeat = onlyWithFailed => {
+    setStep(1)
     onRepeat(onlyWithFailed)
-  };
+  }
 
   const renderFormStep = () => {
     switch (step) {
       case 2:
-        const hasAnythingToRepeat = Boolean(progress.mistakes.length);
+        const hasAnythingToRepeat = Boolean(progress.mistakes.length)
         return (
           <>
-            <h1>{hasAnythingToRepeat ? 'Words to repeat' : 'You got all words correctly!'}</h1>
-            {hasAnythingToRepeat
-              ? <Table height="300px" entries={progress.mistakes} />
-              : <FlexMiddleRow><StickerCheckOutlineIcon color="darkseagreen" size={120} /></FlexMiddleRow>
-            }
+            <h1>
+              {hasAnythingToRepeat
+                ? "Words to repeat"
+                : "You got all words correctly!"}
+            </h1>
+            {hasAnythingToRepeat ? (
+              <Table height="300px" entries={progress.mistakes} />
+            ) : (
+              <FlexMiddleRow>
+                <StickerCheckOutlineIcon color="darkseagreen" size={120} />
+              </FlexMiddleRow>
+            )}
             <ButtonContainer>
-              {hasAnythingToRepeat ? <Button onClick={() => callRepeat(true)}>Repeat only failed</Button> : null}
+              {hasAnythingToRepeat ? (
+                <Button onClick={() => callRepeat(true)}>
+                  Repeat only failed
+                </Button>
+              ) : null}
               <Button onClick={() => callRepeat()}>Repeat the test</Button>
-              <Button onClick={() => history.replace("/main/exercises")}>Close</Button>
+              <Button onClick={() => history.replace("/main/exercises")}>
+                Close
+              </Button>
             </ButtonContainer>
           </>
         )
@@ -94,22 +108,26 @@ const ExerciseResults = ({ onRepeat, progress, entries }) => {
                 answers: &nbsp;
                 <strong>
                   {progress.correct.length} (
-                  {((progress.correct.length / entries.length) * 100).toFixed(2)}
+                  {((progress.correct.length / entries.length) * 100).toFixed(
+                    2
+                  )}
                   )%
                 </strong>
               </li>
               <li>
-                <CommentRemoveOutlineIcon color="red" size={28} /> Wrong answers:
-                &nbsp;
+                <CommentRemoveOutlineIcon color="red" size={28} /> Wrong
+                answers: &nbsp;
                 <strong>
                   {progress.mistakes.length} (
-                  {((progress.mistakes.length / entries.length) * 100).toFixed(2)}
+                  {((progress.mistakes.length / entries.length) * 100).toFixed(
+                    2
+                  )}
                   )%
                 </strong>
               </li>
               <li>
-                <AlertCircleOutlineIcon color="orange" size={28} /> Most complicated
-                word: &nbsp;
+                <AlertCircleOutlineIcon color="orange" size={28} /> Most
+                complicated word: &nbsp;
                 <strong>{progress.mainMistake || "-"}</strong>
               </li>
             </ResultsStatistics>
@@ -117,7 +135,7 @@ const ExerciseResults = ({ onRepeat, progress, entries }) => {
               <Button onClick={() => setStep(step + 1)}>Next</Button>
             </ButtonContainer>
           </>
-        );
+        )
     }
   }
 
@@ -129,7 +147,6 @@ const ExerciseResults = ({ onRepeat, progress, entries }) => {
         onClick={() => history.replace("/main/exercises")}
       />
       {renderFormStep()}
-      
     </Results>
   )
 }
@@ -154,10 +171,12 @@ ExerciseResults.propTypes = {
     ).isRequired,
     mainMistake: PropTypes.string,
   }).isRequired,
-  entries: PropTypes.arrayOf(PropTypes.shape({
-    word: PropTypes.string.isRequired,
-    meaning: PropTypes.string.isRequired,
-  })).isRequired,
+  entries: PropTypes.arrayOf(
+    PropTypes.shape({
+      word: PropTypes.string.isRequired,
+      meaning: PropTypes.string.isRequired,
+    })
+  ).isRequired,
 }
 
 export { ExerciseResults }
