@@ -18,6 +18,7 @@
     "gatsby": "^2.23.3",
     "gatsby-plugin-react-helmet": "^3.3.4",
     "lodash.debounce": "^4.0.8",
+    "lodash.uniqby": "^4.7.0",
     "mdi-react": "^7.3.0",
     "normalize.css": "^8.0.1",
     "papaparse": "^5.2.0",
