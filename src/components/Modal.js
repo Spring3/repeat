@@ -22,9 +22,11 @@ const ModalContainer = styled.div`
 
 const ModalContent = styled.div`
   width: 70%;
-  min-height: 300px;
+  display: flex;
+  flex-direction: column;
   background-color: white;
   border-radius: 3px;
+  padding: 2rem;
 `
 
 const ModalHeader = styled.header`
@@ -32,36 +34,41 @@ const ModalHeader = styled.header`
   box-sizing: border-box;
   min-height: 2rem;
   display: flex;
-  justify-content: flex-end;
   position: relative;
-  padding: 2rem;
 
   & > svg:first-of-type {
     align-self: flex-end;
     position: absolute;
     cursor: pointer;
-    top: 1rem;
-    right: 1rem;
+    top: 0;
+    right: 0;
     &:hover {
       fill: black;
     }
   }
 `
 
-const Modal = ({ children, detached, onClose }) => {
+const ModalBody = styled.div`
+  flex-grow: 1;
+  margin-top: 1rem;
+`
+
+const Modal = ({ children, header, detached, onClose }) => {
   return (
     <ModalContainer detached={detached}>
       <ModalContent>
         <ModalHeader>
+          {header ? <h2>{header}</h2> : null}
           <CloseIcon size={30} color="#999999" onClick={onClose} />
         </ModalHeader>
-        {children}
+        <ModalBody>{children}</ModalBody>
       </ModalContent>
     </ModalContainer>
   )
 }
 
 Modal.propTypes = {
+  header: PropTypes.string,
   detached: PropTypes.bool,
   children: PropTypes.node.isRequired,
   onClose: PropTypes.func.isRequired,

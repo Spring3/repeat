@@ -4,11 +4,16 @@ import { useDropzone } from "react-dropzone"
 import styled from "@emotion/styled"
 
 const StyledDropzone = styled.div`
+  box-sizing: border-box;
   padding: 20px;
   background: #fafafa;
   border: 2px dashed #eeeeee;
   border-radius: 5px;
   min-width: 440px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 
   & > p {
     color: #bdbdbd;
@@ -17,14 +22,14 @@ const StyledDropzone = styled.div`
   }
 `
 
-const Dropzone = ({ onDrop }) => {
+const Dropzone = ({ onDrop, className }) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple: true,
   })
 
   return (
-    <StyledDropzone {...getRootProps()}>
+    <StyledDropzone className={className} {...getRootProps()}>
       <input {...getInputProps()} />
       {isDragActive ? (
         <p>Drop the .csv file here...</p>
@@ -37,6 +42,7 @@ const Dropzone = ({ onDrop }) => {
 
 Dropzone.propTypes = {
   onDrop: PropTypes.func.isRequired,
+  className: PropTypes.string,
 }
 
 export { Dropzone }

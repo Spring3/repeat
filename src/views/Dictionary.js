@@ -86,7 +86,11 @@ const Dictionary = () => {
         <p>No results that match your search query</p>
       )}
       {showDropzoneModal ? (
-        <Modal detached onClose={() => setShowDropzoneModal(false)}>
+        <Modal
+          header="Upload files"
+          detached
+          onClose={() => setShowDropzoneModal(false)}
+        >
           <Dropzone onDrop={onDrop} />
           {error ? <ErrorMessage color="red">{error}</ErrorMessage> : null}
         </Modal>
