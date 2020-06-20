@@ -10,6 +10,7 @@ import { useWindowSize } from "../hooks/useWindowSize"
 import { css } from "@emotion/core"
 import { shuffle } from "../utils/shuffleArray"
 import { ExerciseResults } from "../components/ExerciseResults"
+import { formatMeaning } from "../utils/formatMeaning"
 
 const ExerciseWrapper = styled.div`
   padding: 2rem 4rem;
@@ -30,7 +31,6 @@ const ExerciseWrapper = styled.div`
 
 const Task = styled.div`
   display: flex;
-  height: 100%;
   flex-direction: column;
   justify-content: space-evenly;
 
@@ -59,8 +59,16 @@ const TaskInformation = styled.div`
   }
 
   .meaning {
+    margin: 0;
     font-weight: bold;
     font-size: 1.2rem;
+
+    li {
+      margin-bottom: 1rem;
+      i {
+        margin-right: 1rem;
+      }
+    }
   }
 `
 
@@ -127,6 +135,8 @@ const StandardExercise = () => {
     })
   }
 
+  const meanings = formatMeaning(entry ? entry.meaning : null)
+
   return (
     <CenteredWrapper>
       <ExerciseWrapper showResults={progress.index === entries.length}>
@@ -147,7 +157,18 @@ const StandardExercise = () => {
             <Task>
               <TaskInformation>
                 <h4>Meaning:</h4>
-                <div className="meaning">{entry.meaning}</div>
+                <ul className="meaning">
+                  {meanings.map((entry, i) =>
+                    typeof entry === "string" ? (
+                      <li key={i}>{entry}</li>
+                    ) : (
+                      <li key={i}>
+                        <i>{Object.keys(entry)[0]}:</i>
+                        <span>{Object.values(entry)[0]}</span>
+                      </li>
+                    )
+                  )}
+                </ul>
               </TaskInformation>
               <Input
                 type="text"
