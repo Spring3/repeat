@@ -14,10 +14,6 @@ const Results = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 100%;
-  flex-grow: 1;
-  width: 100%;
-  position: absolute;
 
   & > svg:first-of-type {
     align-self: flex-end;

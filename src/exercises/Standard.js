@@ -1,32 +1,32 @@
 import React, { useState, useCallback } from "react"
 import styled from "@emotion/styled"
 import { useData } from "../contexts/DataContext"
-import { CenteredWrapper } from '../components/CenteredWrapper';
-import { Input } from '../components/Input';
-import { Progressbar } from '../components/Progressbar';
-import Confetti from 'react-confetti';
-import tweenFunctions from 'tween-functions';
-import { useWindowSize } from '../hooks/useWindowSize';
-import { css } from "@emotion/core";
-import { shuffle } from '../utils/shuffleArray';
-import { ExerciseResults } from '../components/ExerciseResults';
+import { CenteredWrapper } from "../components/CenteredWrapper"
+import { Input } from "../components/Input"
+import { Progressbar } from "../components/Progressbar"
+import Confetti from "react-confetti"
+import tweenFunctions from "tween-functions"
+import { useWindowSize } from "../hooks/useWindowSize"
+import { css } from "@emotion/core"
+import { shuffle } from "../utils/shuffleArray"
+import { ExerciseResults } from "../components/ExerciseResults"
 
-const TestWrapper = styled.div`
+const ExerciseWrapper = styled.div`
   padding: 2rem 4rem;
   border-radius: 10px;
   box-shadow: 0px 0px 20px #dedede;
   border: 1px solid #dedede;
-  ${props => props.showResults
-    ? css`
-      min-height: 500px;
-      min-width: 500px;
-    `
-    : css`
-      min-height: 300px;
-      min-width: 300px;
-    `
-  }
-`;
+
+  ${props =>
+    props.showResults
+      ? css`
+          min-width: 500px;
+        `
+      : css`
+          min-height: 300px;
+          min-width: 300px;
+        `}
+`
 
 const Task = styled.div`
   display: flex;
@@ -38,43 +38,43 @@ const Task = styled.div`
     margin-top: 1rem;
     font-weight: bold;
   }
-`;
+`
 
 const TaskProgress = styled.div`
   text-align: center;
-  color: #BBBBBB;
+  color: #bbbbbb;
 
   .index {
     z-index: 1;
-    font-size: .8rem;
-    background: rgba(255, 255, 255, .5);
+    font-size: 0.8rem;
+    background: rgba(255, 255, 255, 0.5);
   }
-`;
+`
 
 const TaskInformation = styled.div`
   margin-top: 2rem;
   margin-bottom: 2rem;
   h4 {
-    color: #BBBBBB;
+    color: #bbbbbb;
   }
 
   .meaning {
     font-weight: bold;
     font-size: 1.2rem;
   }
-`;
+`
 
 const StandardExercise = () => {
-  const { data } = useData();
-  const [entries, setEntries] = useState(shuffle(data));
-  const windowSize = useWindowSize();
+  const { data } = useData()
+  const [entries, setEntries] = useState(shuffle(data))
+  const windowSize = useWindowSize()
   const [confettiTime, setConfettiTime] = useState(false)
   // TODO: move to context
   const [progress, setProgress] = useState({
     index: 0,
     correct: [],
     mistakes: [],
-    mainMistake: ''
+    mainMistake: "",
   })
 
   const entry = entries[progress.index]
@@ -82,9 +82,9 @@ const StandardExercise = () => {
 
   const onKeyUp = e => {
     if (e.keyCode === ENTER) {
-      const nextIndex = progress.index + 1;
+      const nextIndex = progress.index + 1
       if (nextIndex === entries.length) {
-        setConfettiTime(true);
+        setConfettiTime(true)
       }
       const { value } = e.target
       const entry = entries[progress.index]
@@ -108,52 +108,57 @@ const StandardExercise = () => {
     }
   }
 
-  const progressPercent = Number(progress.index / entries.length * 100).toFixed(2);
+  const progressPercent = Number(
+    (progress.index / entries.length) * 100
+  ).toFixed(2)
 
-  const onComplete = (confetti) => {
-    setConfettiTime(false);
-    confetti.reset();
-  };
+  const onComplete = confetti => {
+    setConfettiTime(false)
+    confetti.reset()
+  }
 
-  const onRepeat = (onlyFailed) => {
-    setEntries(shuffle(onlyFailed ? progress.mistakes : data));
+  const onRepeat = onlyFailed => {
+    setEntries(shuffle(onlyFailed ? progress.mistakes : data))
     setProgress({
       index: 0,
       correct: [],
       mistakes: [],
       mainMistake: "",
     })
-  };
+  }
 
   return (
     <CenteredWrapper>
-      <TestWrapper showResults={progress.index === entries.length}>
-        {
-          progress.index === entries.length
-          ? (
-            <ExerciseResults
-              onRepeat={onRepeat}
-              progress={progress}
-              entries={entries}
-            />
-          )
-          : (
-            <>
-              <TaskProgress>
-                <div className="index">{progress.index + 1} / {entries.length}</div>
-                <Progressbar thickness={2} percent={progressPercent} />
-              </TaskProgress>
-              <Task>
-                <TaskInformation>
-                  <h4>Meaning:</h4>
-                  <div className="meaning">{entry.meaning}</div>
-                </TaskInformation>
-                <Input type="text" onKeyUp={onKeyUp} placeholder="Word:" required />
-              </Task>
-            </>
-          )
-        }
-      </TestWrapper>
+      <ExerciseWrapper showResults={progress.index === entries.length}>
+        {progress.index === entries.length ? (
+          <ExerciseResults
+            onRepeat={onRepeat}
+            progress={progress}
+            entries={entries}
+          />
+        ) : (
+          <>
+            <TaskProgress>
+              <div className="index">
+                {progress.index + 1} / {entries.length}
+              </div>
+              <Progressbar thickness={2} percent={progressPercent} />
+            </TaskProgress>
+            <Task>
+              <TaskInformation>
+                <h4>Meaning:</h4>
+                <div className="meaning">{entry.meaning}</div>
+              </TaskInformation>
+              <Input
+                type="text"
+                onKeyUp={onKeyUp}
+                placeholder="Word:"
+                required
+              />
+            </Task>
+          </>
+        )}
+      </ExerciseWrapper>
       <Confetti
         height={windowSize.height}
         width={windowSize.width}
@@ -164,11 +169,11 @@ const StandardExercise = () => {
           x: 0,
           y: windowSize.height / 2,
           w: 0,
-          h: windowSize.height
+          h: windowSize.height,
         }}
-        friction={.97}
-        gravity={.2}
-        wind={.1}
+        friction={0.97}
+        gravity={0.2}
+        wind={0.1}
         tweenDuration={7000}
         initialVelocityX={15}
         initialVelocityY={30}
@@ -185,11 +190,11 @@ const StandardExercise = () => {
           x: windowSize.width,
           y: windowSize.height / 2,
           w: 0,
-          h: windowSize.height
+          h: windowSize.height,
         }}
-        friction={.97}
-        gravity={.2}
-        wind={-.1}
+        friction={0.97}
+        gravity={0.2}
+        wind={-0.1}
         initialVelocityX={-15}
         initialVelocityY={30}
         tweenFunction={tweenFunctions.easeOutQuad}
