@@ -3,7 +3,6 @@ import PropTypes from "prop-types"
 import styled from "@emotion/styled"
 import CommentCheckOutlineIcon from "mdi-react/CommentCheckOutlineIcon"
 import CommentRemoveOutlineIcon from "mdi-react/CommentRemoveOutlineIcon"
-import AlertCircleOutlineIcon from "mdi-react/AlertCircleOutlineIcon"
 import StickerCheckOutlineIcon from "mdi-react/StickerCheckOutlineIcon"
 import { Table } from "./Table"
 import { Button } from "./Button"
@@ -95,36 +94,40 @@ const ExerciseResults = ({ onRepeat, progress, entries }) => {
           </>
         )
       default:
+        const percentageCorrect = (
+          (progress.correct.length / entries.length) *
+          100
+        ).toFixed(2)
+        const percentageMistakes = 100 - percentageCorrect
+        let header
+        if (percentageCorrect === 100) {
+          header = "Excellent!"
+        } else if (percentageCorrect > 80) {
+          header = "Well done!"
+        } else if (percentageCorrect > 50) {
+          header = "Good job!"
+        } else if (percentageCorrect > 0) {
+          header = "A descent try"
+        } else {
+          header = "You'll do better next time"
+        }
         return (
           <>
-            <h1>Well Done!</h1>
+            <h1>{header}</h1>
             <ResultsStatistics>
               <li>
                 <CommentCheckOutlineIcon color="lightgreen" size={28} /> Correct
                 answers: &nbsp;
                 <strong>
-                  {progress.correct.length} (
-                  {((progress.correct.length / entries.length) * 100).toFixed(
-                    2
-                  )}
-                  )%
+                  {progress.correct.length} ({percentageCorrect})%
                 </strong>
               </li>
               <li>
                 <CommentRemoveOutlineIcon color="red" size={28} /> Wrong
                 answers: &nbsp;
                 <strong>
-                  {progress.mistakes.length} (
-                  {((progress.mistakes.length / entries.length) * 100).toFixed(
-                    2
-                  )}
-                  )%
+                  {progress.mistakes.length} ({percentageMistakes})%
                 </strong>
-              </li>
-              <li>
-                <AlertCircleOutlineIcon color="orange" size={28} /> Most
-                complicated word: &nbsp;
-                <strong>{progress.mainMistake || "-"}</strong>
               </li>
             </ResultsStatistics>
             <ButtonContainer>

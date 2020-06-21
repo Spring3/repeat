@@ -82,7 +82,6 @@ const StandardExercise = () => {
     index: 0,
     correct: [],
     mistakes: [],
-    mainMistake: "",
   })
 
   const entry = entries[progress.index]
@@ -102,7 +101,6 @@ const StandardExercise = () => {
           ...progress,
           index: nextIndex,
           correct: [...progress.correct, { index: progress.index, ...entry }],
-          mistakes: progress.mistakes,
         })
       } else {
         setProgress({
@@ -131,7 +129,6 @@ const StandardExercise = () => {
       index: 0,
       correct: [],
       mistakes: [],
-      mainMistake: "",
     })
   }
 
