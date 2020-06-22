@@ -107,7 +107,7 @@ const ExerciseResults = ({ onRepeat, progress, entries }) => {
         } else if (percentageCorrect > 50) {
           header = "Good job!"
         } else if (percentageCorrect > 0) {
-          header = "A descent try"
+          header = "A decent try"
         } else {
           header = "You'll do better next time"
         }

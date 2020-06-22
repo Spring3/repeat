@@ -1,17 +1,18 @@
-import React from 'react';
-import styled from '@emotion/styled';
-import { Switch, Route, useRouteMatch, useHistory } from 'react-router-dom';
+import React from "react"
+import styled from "@emotion/styled"
+import { Switch, Route, useRouteMatch, useHistory } from "react-router-dom"
 
-import { Wrapper } from '../components/Wrapper';
-import ImageStandard from '../images/standard.jpg';
-import ImageMeaning from '../images/meaning.jpg';
-import { Standard, Matching } from '../exercises';
+import { Wrapper } from "../components/Wrapper"
+import ImageStandard from "../images/standard.jpg"
+import ImageMeaning from "../images/meaning.jpg"
+import { Standard, Matching } from "../exercises"
+import { ExerciseContextProvider } from "../contexts/ExerciseContext"
 
 const GridWrapper = styled(Wrapper)`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   grid-gap: 2rem;
-`;
+`
 
 const ExerciseCard = styled.div`
   display: flex;
@@ -22,7 +23,7 @@ const ExerciseCard = styled.div`
   box-shadow: 0px 0px 5px 2px #eee;
   cursor: pointer;
   position: relative;
-`;
+`
 
 const CardImage = styled.div`
   border-radius: 5px;
@@ -33,28 +34,32 @@ const CardImage = styled.div`
   height: 100%;
   width: 100%;
   background-size: cover;
-`;
+`
 
 const CardInformation = styled.div`
   z-index: 2;
   border-radius: 5px;
-  background: rgba(255, 255, 255, .6);
+  background: rgba(255, 255, 255, 0.6);
   padding: 1rem;
-`;
+`
 
 const ExerciseCatalogue = () => {
-  const history = useHistory();
+  const history = useHistory()
   return (
     <GridWrapper>
-      <ExerciseCard onClick={() => history.push('/main/exercises/standard')}>
+      <ExerciseCard onClick={() => history.push("/main/exercises/standard")}>
         <CardImage image={ImageStandard} loading="lazy" alt="Dictionary" />
         <CardInformation>
           <h2>Standard</h2>
           <p>You are given the meaning, and you need to type the word</p>
         </CardInformation>
       </ExerciseCard>
-      <ExerciseCard onClick={() => history.push('/main/exercises/matching')}>
-        <CardImage image={ImageMeaning} loading="lazy" alt="Matching the words" />
+      <ExerciseCard onClick={() => history.push("/main/exercises/matching")}>
+        <CardImage
+          image={ImageMeaning}
+          loading="lazy"
+          alt="Matching the words"
+        />
         <CardInformation>
           <h2>Match the meaning</h2>
           <p>You are given the word, and you need to choose the meaning</p>
@@ -65,17 +70,17 @@ const ExerciseCatalogue = () => {
 }
 
 const Exercises = () => {
-  const { path } = useRouteMatch();
+  const { path } = useRouteMatch()
 
   return (
-    <Switch>
-      <Route exact path={path} component={ExerciseCatalogue} />
-      <Route exact path={`${path}/standard`} component={Standard} />
-      <Route exact path={`${path}/matching`} component={Matching} />
-    </Switch>
+    <ExerciseContextProvider>
+      <Switch>
+        <Route exact path={path} component={ExerciseCatalogue} />
+        <Route exact path={`${path}/standard`} component={Standard} />
+        <Route exact path={`${path}/matching`} component={Matching} />
+      </Switch>
+    </ExerciseContextProvider>
   )
 }
 
-export {
-  Exercises
-};
+export { Exercises }

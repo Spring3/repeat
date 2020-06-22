@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react"
+import React, { useState, useEffect } from "react"
 import styled from "@emotion/styled"
 import { useData } from "../contexts/DataContext"
 import { CenteredWrapper } from "../components/CenteredWrapper"
@@ -8,9 +8,9 @@ import Confetti from "react-confetti"
 import tweenFunctions from "tween-functions"
 import { useWindowSize } from "../hooks/useWindowSize"
 import { css } from "@emotion/core"
-import { shuffle } from "../utils/shuffleArray"
 import { ExerciseResults } from "../components/ExerciseResults"
 import { formatMeaning } from "../utils/formatMeaning"
+import { useExercise } from "../contexts/ExerciseContext"
 
 const ExerciseWrapper = styled.div`
   padding: 2rem 4rem;
@@ -74,82 +74,67 @@ const TaskInformation = styled.div`
 
 const StandardExercise = () => {
   const { data } = useData()
-  const [entries, setEntries] = useState(shuffle(data))
+  const {
+    progress,
+    percentDone,
+    totalQuestions,
+    getCurrentEntry,
+    getEntries,
+    isDone,
+    submitAnswer,
+    repeat,
+    reset,
+  } = useExercise(data)
   const windowSize = useWindowSize()
   const [confettiTime, setConfettiTime] = useState(false)
-  // TODO: move to context
-  const [progress, setProgress] = useState({
-    index: 0,
-    correct: [],
-    mistakes: [],
-  })
 
-  const entry = entries[progress.index]
+  useEffect(() => {
+    reset(data)
+  }, [])
+
+  const entry = getCurrentEntry()
   const ENTER = 13
 
   const onKeyUp = e => {
     if (e.keyCode === ENTER) {
-      const nextIndex = progress.index + 1
-      if (nextIndex === entries.length) {
+      if (isDone) {
         setConfettiTime(true)
       }
       const { value } = e.target
-      const entry = entries[progress.index]
+      const entry = getCurrentEntry()
 
-      if (value.trim().toLowerCase() === entry.word) {
-        setProgress({
-          ...progress,
-          index: nextIndex,
-          correct: [...progress.correct, { index: progress.index, ...entry }],
-        })
-      } else {
-        setProgress({
-          ...progress,
-          index: nextIndex,
-          correct: progress.correct,
-          mistakes: [...progress.mistakes, { index: progress.index, ...entry }],
-        })
-      }
+      const formattedValue = value.trim().toLowerCase()
+
+      submitAnswer({
+        isCorrect: formattedValue === entry.word,
+      })
+
       e.target.value = ""
     }
   }
-
-  const progressPercent = Number(
-    (progress.index / entries.length) * 100
-  ).toFixed(2)
 
   const onComplete = confetti => {
     setConfettiTime(false)
     confetti.reset()
   }
-
-  const onRepeat = onlyFailed => {
-    setEntries(shuffle(onlyFailed ? progress.mistakes : data))
-    setProgress({
-      index: 0,
-      correct: [],
-      mistakes: [],
-    })
-  }
-
   const meanings = formatMeaning(entry ? entry.meaning : null)
 
   return (
     <CenteredWrapper>
-      <ExerciseWrapper showResults={progress.index === entries.length}>
-        {progress.index === entries.length ? (
+      <ExerciseWrapper showResults={isDone}>
+        {isDone ? (
           <ExerciseResults
-            onRepeat={onRepeat}
+            onRepeat={repeat}
             progress={progress}
-            entries={entries}
+            entries={getEntries()}
           />
         ) : (
           <>
             <TaskProgress>
               <div className="index">
-                {progress.index + 1} / {entries.length}
+                {progress.index + 1} / {totalQuestions}
               </div>
-              <Progressbar thickness={2} percent={progressPercent} />
+              <Progressbar thickness={2} percent={percentDone} />
             </TaskProgress>
             <Task>
               <TaskInformation>
