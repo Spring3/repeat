@@ -33,15 +33,14 @@ const useExerciseContext = () => {
   }
 
   const getCurrentEntry = () => {
-    return entries[progress.index]
+    return entries.length ? entries[progress.index] : {}
   }
 
   const getEntries = () => {
     return entries
   }
 
-  const submitAnswer = answer => {
-    const { isCorrect } = answer
+  const submitAnswer = ({ isCorrect }) => {
     if (isDone) {
       return
     }
