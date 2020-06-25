@@ -3,22 +3,28 @@ import { shuffle } from "../utils/shuffleArray"
 
 const ExerciseContext = createContext()
 
+const DEFAULT_BATCH_SIZE = 1
+
 const useExerciseContext = () => {
   const [entries, setEntries] = useState([])
+  const [batchSize, setBatchSize] = useState(1)
   const [progress, setProgress] = useState({
     index: 0,
+    isDone: false,
+    isLast: false,
     correct: [],
     mistakes: [],
   })
 
-  const isDone = entries.length && progress.index === entries.length
-
-  const reset = entries => {
+  const reset = (entries, options = {}) => {
     if (entries) {
       setEntries(shuffle(entries))
     }
+    setBatchSize(options.batchSize || DEFAULT_BATCH_SIZE)
     setProgress({
       index: 0,
+      isDone: false,
+      isLast: false,
       correct: [],
       mistakes: [],
     })
@@ -26,31 +32,33 @@ const useExerciseContext = () => {
 
   const repeat = mistakesOnly => {
     if (mistakesOnly) {
-      reset(progress.mistakes)
+      reset(progress.mistakes, { batchSize })
     } else {
-      reset()
+      reset(undefined, { batchSize })
     }
   }
 
-  const getCurrentEntry = () => {
-    return entries.length ? entries[progress.index] : {}
+  const getCurrentBatch = () => {
+    if (!entries.length || progress.isDone) {
+      return []
+    }
+    return entries.slice(progress.index, progress.index + batchSize)
   }
 
-  const getEntries = () => {
-    return entries
-  }
-
-  const submitAnswer = ({ isCorrect }) => {
-    if (isDone) {
+  const submitAnswer = ({ correct = [], mistakes = [] }) => {
+    if (progress.isDone) {
       return
     }
-    const entry = getCurrentEntry()
+
+    const nextIndex = progress.index + batchSize
 
     setProgress({
       ...progress,
-      index: progress.index + 1,
-      correct: isCorrect ? [...progress.correct, entry] : progress.correct,
-      mistakes: isCorrect ? progress.mistakes : [...progress.mistakes, entry],
+      isDone: entries.length && nextIndex >= entries.length,
+      isLast: nextIndex + batchSize >= entries.length,
+      index: nextIndex,
+      correct: progress.correct.concat(correct),
+      mistakes: progress.mistakes.concat(mistakes),
     })
   }
 
@@ -58,12 +66,11 @@ const useExerciseContext = () => {
 
   return {
     progress,
-    isDone: progress.index === entries.length,
     percentDone,
     totalQuestions: entries.length,
     submitAnswer,
-    getCurrentEntry,
-    getEntries,
+    setBatchSize,
+    getCurrentBatch,
     repeat,
     reset,
   }

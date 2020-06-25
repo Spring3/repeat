@@ -11,7 +11,7 @@ const MatchingExercise = () => {
     progress,
     next,
     isDone,
-    getCurrentEntry,
+    getCurrentBatch,
     repeat,
     getEntries,
     submitAnswer,
@@ -19,10 +19,10 @@ const MatchingExercise = () => {
   } = useExercise()
 
   useEffect(() => {
-    reset(data)
+    reset(data, { batchSize: 4 })
   }, [])
 
-  const entry = getCurrentEntry()
+  const batch = getCurrentBatch()
 
   if (isDone) {
     return (
@@ -37,9 +37,11 @@ const MatchingExercise = () => {
   return (
     <CenteredWrapper>
       <div>
-        <h3>{entry.meaning}</h3>
-        <input type="text" placeholder="Answer" required />
-        <small>Press Enter to submit</small>
+        <ul>
+          {batch.map(entry => (
+            <li key={entry.word}>{entry.word}</li>
+          ))}
+        </ul>
       </div>
     </CenteredWrapper>
   )

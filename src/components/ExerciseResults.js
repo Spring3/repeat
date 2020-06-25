@@ -53,14 +53,9 @@ const FlexMiddleRow = styled.div`
   justify-content: center;
 `
 
-const ExerciseResults = ({ onRepeat, progress, entries }) => {
+const ExerciseResults = ({ onRepeat, onReset, progress }) => {
   const history = useHistory()
   const [step, setStep] = useState(1)
-
-  const callRepeat = onlyWithFailed => {
-    setStep(1)
-    onRepeat(onlyWithFailed)
-  }
 
   const renderFormStep = () => {
     switch (step) {
@@ -82,11 +77,23 @@ const ExerciseResults = ({ onRepeat, progress, entries }) => {
             )}
             <ButtonContainer>
               {hasAnythingToRepeat ? (
-                <Button onClick={() => callRepeat(true)}>
+                <Button
+                  onClick={() => {
+                    setStep(1)
+                    onRepeat(true)
+                  }}
+                >
                   Repeat only failed
                 </Button>
               ) : null}
-              <Button onClick={() => callRepeat()}>Repeat the test</Button>
+              <Button
+                onClick={() => {
+                  setStep(1)
+                  onReset()
+                }}
+              >
+                Repeat the test
+              </Button>
               <Button onClick={() => history.replace("/main/exercises")}>
                 Close
               </Button>
@@ -95,7 +102,8 @@ const ExerciseResults = ({ onRepeat, progress, entries }) => {
         )
       default:
         const percentageCorrect = (
-          (progress.correct.length / entries.length) *
+          (progress.correct.length /
+            (progress.correct.length + progress.mistakes.length)) *
           100
         ).toFixed(2)
         const percentageMistakes = 100 - percentageCorrect
@@ -152,30 +160,25 @@ const ExerciseResults = ({ onRepeat, progress, entries }) => {
 
 ExerciseResults.propTypes = {
   onRepeat: PropTypes.func.isRequired,
+  onReset: PropTypes.func.isRequired,
   progress: PropTypes.shape({
     index: PropTypes.number.isRequired,
     correct: PropTypes.arrayOf(
       PropTypes.shape({
-        index: PropTypes.number.isRequired,
+        index: PropTypes.number,
         word: PropTypes.string.isRequired,
         meaning: PropTypes.string.isRequired,
       })
     ).isRequired,
     mistakes: PropTypes.arrayOf(
       PropTypes.shape({
-        index: PropTypes.number.isRequired,
+        index: PropTypes.number,
         word: PropTypes.string.isRequired,
         meaning: PropTypes.string.isRequired,
       })
     ).isRequired,
     mainMistake: PropTypes.string,
   }).isRequired,
-  entries: PropTypes.arrayOf(
-    PropTypes.shape({
-      word: PropTypes.string.isRequired,
-      meaning: PropTypes.string.isRequired,
-    })
-  ).isRequired,
 }
 
 export { ExerciseResults }

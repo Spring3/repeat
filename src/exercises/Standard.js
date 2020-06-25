@@ -78,9 +78,7 @@ const StandardExercise = () => {
     progress,
     percentDone,
     totalQuestions,
-    getCurrentEntry,
-    getEntries,
-    isDone,
+    getCurrentBatch,
     submitAnswer,
     repeat,
     reset,
@@ -89,25 +87,29 @@ const StandardExercise = () => {
   const [confettiTime, setConfettiTime] = useState(false)
 
   useEffect(() => {
-    reset(data)
+    reset(data, { batchSize: 1 })
   }, [])
 
-  const entry = getCurrentEntry()
+  const entry = getCurrentBatch()[0]
   const ENTER = 13
+  const { isDone, isLast } = progress
 
   const onKeyUp = e => {
     if (e.keyCode === ENTER) {
-      if (isDone) {
-        setConfettiTime(true)
-      }
       const { value } = e.target
-      const entry = getCurrentEntry()
+      const entry = getCurrentBatch()[0]
 
       const formattedValue = value.trim().toLowerCase()
+      const isCorrect = formattedValue === entry.word
 
       submitAnswer({
-        isCorrect: formattedValue === entry.word,
+        correct: isCorrect ? [entry] : [],
+        mistakes: isCorrect ? [] : [entry],
       })
+
+      if (isLast) {
+        setConfettiTime(true)
+      }
 
       e.target.value = ""
     }
@@ -125,8 +127,8 @@ const StandardExercise = () => {
         {isDone ? (
           <ExerciseResults
             onRepeat={repeat}
+            onReset={() => reset(data)}
             progress={progress}
-            entries={getEntries()}
           />
         ) : (
           <>
