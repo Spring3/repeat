@@ -15,7 +15,7 @@
   "dependencies": {
     "@emotion/core": "^10.0.28",
     "@emotion/styled": "^10.0.27",
-    "gatsby": "^2.23.3",
+    "gatsby": "^2.32.13",
     "gatsby-plugin-react-helmet": "^3.3.4",
     "lodash.debounce": "^4.0.8",
     "lodash.uniqby": "^4.7.0",
